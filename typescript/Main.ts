@@ -26,6 +26,8 @@ class Main {
 
 		let camera = new BABYLON.ArcRotateCamera("MenuCamera", 1, 1, 10, BABYLON.Vector3.Zero(), this.scene);
 		camera.attachControl(this.canvas, true);
+
+		let player = new Spaceship(this.scene);
 	}
 
 	public animate(): void {

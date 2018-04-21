@@ -16,6 +16,7 @@ class Main {
         let depth = Math.max(height, width);
         let camera = new BABYLON.ArcRotateCamera("MenuCamera", 1, 1, 10, BABYLON.Vector3.Zero(), this.scene);
         camera.attachControl(this.canvas, true);
+        let player = new Spaceship(this.scene);
     }
     animate() {
         this.engine.runRenderLoop(() => {
@@ -31,3 +32,13 @@ window.addEventListener("DOMContentLoaded", () => {
     game.createScene();
     game.animate();
 });
+class Spaceship extends BABYLON.Mesh {
+    constructor(scene) {
+        super("Spaceship", scene);
+        BABYLON.SceneLoader.ImportMesh("", "./models/spaceship.babylon", "", this.getScene(), (meshes) => {
+            if (meshes[0]) {
+                meshes[0].parent = this;
+            }
+        });
+    }
+}
