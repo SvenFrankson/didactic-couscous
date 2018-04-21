@@ -65,6 +65,9 @@ class LetterGrid {
         this.initialize();
         this.scene.onBeforeRenderObservable.add(this._checkPendingCells);
     }
+    static get GRID_DISTANCE() {
+        return (LetterGrid.GRID_LENGTH + 1) * LetterGrid.GRID_SIZE;
+    }
     get wordValidator() {
         return this.main.wordValidator;
     }
@@ -307,11 +310,13 @@ class Main {
         skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
         skybox.material = skyboxMaterial;
         this.grid = new LetterGrid(this);
-        let player = new Spaceship(this);
-        player.position.copyFromFloats(30, 0, 30);
-        let camera = new SpaceshipCamera(player);
+        this.spaceship = new Spaceship(this);
+        this.spaceship.position.copyFromFloats(30, 0, 30);
+        let camera = new SpaceshipCamera(this.spaceship);
         this.wordValidator = new WordValidator();
         this.wordValidator.initialize();
+        this.bonusGenerator = new BonusGenerator(this);
+        this.bonusGenerator.start();
     }
     animate() {
         this.engine.runRenderLoop(() => {
@@ -476,3 +481,67 @@ class WordValidator {
     }
 }
 WordValidator.MAX_WORD_LENGTH = 6;
+class Bonus extends BABYLON.TransformNode {
+    constructor(name, main) {
+        super(name, main.scene);
+        this.main = main;
+    }
+}
+class BonusGenerator {
+    constructor(main) {
+        this.main = main;
+        this.playerRange = 100;
+        this.letterRate = 5000;
+        this.instances = [];
+    }
+    get grid() {
+        return this.main.grid;
+    }
+    get spaceship() {
+        return this.main.spaceship;
+    }
+    start() {
+        this._popLetter();
+    }
+    _popLetter() {
+        let letter = new Letter(this.main);
+        this.instances.push(letter);
+        let minX = Math.max(0, this.spaceship.position.x - this.playerRange);
+        let maxX = Math.min(LetterGrid.GRID_DISTANCE, this.spaceship.position.x + this.playerRange);
+        let minZ = Math.max(0, this.spaceship.position.x - this.playerRange);
+        let maxZ = Math.min(LetterGrid.GRID_DISTANCE, this.spaceship.position.z + this.playerRange);
+        letter.position.x = Math.random() * (maxX - minX) + minX;
+        letter.position.z = Math.random() * (maxZ - minZ) + minZ;
+        setTimeout(() => {
+            this._popLetter();
+        }, Math.random() * this.letterRate * 1.5);
+    }
+}
+class Letter extends Bonus {
+    constructor(main) {
+        super("Letter", main);
+        this._update = () => {
+            this.rotation.y += (Math.sin(this.rotation.y) * 0.03 + 0.06);
+        };
+        BABYLON.SceneLoader.ImportMesh("", "./models/letter_bonus.babylon", "", this.getScene(), (meshes) => {
+            if (meshes[0]) {
+                meshes[0].parent = this;
+                let materials = meshes[0].material;
+                if (materials instanceof BABYLON.MultiMaterial) {
+                    materials.subMaterials.forEach((material) => {
+                        if (material.name.indexOf("Letter") !== -1) {
+                            if (material instanceof BABYLON.StandardMaterial) {
+                                material.diffuseTexture = new BABYLON.Texture("textures/letter_bonus.png", this.getScene());
+                                material.diffuseTexture.hasAlpha = true;
+                                material.useAlphaFromDiffuseTexture = true;
+                            }
+                        }
+                    });
+                }
+            }
+        });
+        this.position.y = 1;
+        this.rotation.x = Math.PI / 4;
+        this.getScene().onBeforeRenderObservable.add(this._update);
+    }
+}

@@ -8,6 +8,8 @@ class Main {
 	public gui: BABYLON.GUI.AdvancedDynamicTexture;
 	public grid: LetterGrid;
 	public wordValidator: WordValidator;
+	public bonusGenerator: BonusGenerator;
+	public spaceship: Spaceship;
 
 	constructor(canvasElement: string) {
 		this.canvas = document.getElementById(canvasElement) as HTMLCanvasElement;
@@ -57,13 +59,16 @@ class Main {
 
 		this.grid = new LetterGrid(this);
 
-		let player = new Spaceship(this);
-		player.position.copyFromFloats(30, 0, 30);
+		this.spaceship = new Spaceship(this);
+		this.spaceship.position.copyFromFloats(30, 0, 30);
 
-		let camera = new SpaceshipCamera(player);
+		let camera = new SpaceshipCamera(this.spaceship);
 
 		this.wordValidator = new WordValidator();
 		this.wordValidator.initialize();
+
+		this.bonusGenerator = new BonusGenerator(this);
+		this.bonusGenerator.start();
 	}
 
 	public animate(): void {

@@ -57,6 +57,9 @@ class LetterGrid {
 
     public static readonly GRID_LENGTH: number = 128;
     public static readonly GRID_SIZE: number = 4;
+    public static get GRID_DISTANCE(): number {
+        return (LetterGrid.GRID_LENGTH + 1) * LetterGrid.GRID_SIZE;
+    }
     public static readonly PENDING_DELAY: number = 5;
     public grid: LetterCell[][];
     public pendingCells: LetterCell[];
