@@ -1,6 +1,6 @@
 class BonusGenerator {
 
-    public instances: Bonus[];
+    public bonuses: Bonus[];
 
     public playerRange: number = 100;
     public letterRate: number = 5000;
@@ -13,7 +13,8 @@ class BonusGenerator {
     }
 
     constructor(public main: Main) {
-        this.instances = [];
+        this.bonuses = [];
+        this.main.scene.onBeforeRenderObservable.add(this._checkIntersection);
     }
 
     public start(): void {
@@ -22,7 +23,7 @@ class BonusGenerator {
 
     private _popLetter(): void {
         let letter = new Letter(this.main);
-        this.instances.push(letter);
+        this.bonuses.push(letter);
         let minX = Math.max(0, this.spaceship.position.x - this.playerRange);
         let maxX = Math.min(LetterGrid.GRID_DISTANCE, this.spaceship.position.x + this.playerRange);
         let minZ = Math.max(0, this.spaceship.position.x - this.playerRange);
@@ -35,5 +36,16 @@ class BonusGenerator {
             },
             Math.random() * this.letterRate * 1.5
         );
+    }
+
+    public _checkIntersection = () => {
+        for (let i = 0; i < this.bonuses.length; i++) {
+            let b = this.bonuses[i];
+            if (BABYLON.Vector3.DistanceSquared(b.position, this.spaceship.position) < 9) {
+                this.bonuses.splice(i, 1);
+                b.catch();
+                return;
+            }
+        }
     }
 }

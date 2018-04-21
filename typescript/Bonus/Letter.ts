@@ -35,4 +35,10 @@ class Letter extends Bonus {
     private _update = () => {
         this.rotation.y += (Math.sin(this.rotation.y) * 0.03 + 0.06)
     }
+
+    public catch(): void {
+        this.main.spaceship.letterStack.add(WordValidator.randomLetter());
+        this.getScene().onBeforeRenderObservable.removeCallback(this._update);
+        this.dispose();
+    }
 }

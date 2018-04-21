@@ -32,4 +32,10 @@ class WordValidator {
             return words.indexOf(word.toLowerCase()) !== -1;
         }
     }
+
+    public static letters = "EEEEEEEEEEEEAAAAAAAAAIIIIIIIIIOOOOOOOONNNNNNRRRRRRTTTTTTLLLLSSSSUUUUDDDDGGGBBCCMMPPFFHHVVWWYYKJXQZ";
+    public static randomLetter(): string {
+        let r = Math.floor(Math.random() * WordValidator.letters.length);
+        return WordValidator.letters[r];
+    }
 }

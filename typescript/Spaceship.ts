@@ -67,6 +67,6 @@ class Spaceship extends BABYLON.Mesh {
 
         this.velocity.subtractInPlace(dragX).subtractInPlace(dragZ).addInPlace(framer);
         this.position.addInPlace(this.velocity.scale(deltaTime));
-        console.log(this.thrust);
+        this.position.y = 0;
     }
 }

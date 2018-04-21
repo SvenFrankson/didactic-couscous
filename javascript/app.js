@@ -367,7 +367,7 @@ class Spaceship extends BABYLON.Mesh {
             }
             this.velocity.subtractInPlace(dragX).subtractInPlace(dragZ).addInPlace(framer);
             this.position.addInPlace(this.velocity.scale(deltaTime));
-            console.log(this.thrust);
+            this.position.y = 0;
         };
         BABYLON.SceneLoader.ImportMesh("", "./models/spaceship.babylon", "", this.getScene(), (meshes) => {
             if (meshes[0]) {
@@ -479,12 +479,19 @@ class WordValidator {
             return words.indexOf(word.toLowerCase()) !== -1;
         }
     }
+    static randomLetter() {
+        let r = Math.floor(Math.random() * WordValidator.letters.length);
+        return WordValidator.letters[r];
+    }
 }
 WordValidator.MAX_WORD_LENGTH = 6;
+WordValidator.letters = "EEEEEEEEEEEEAAAAAAAAAIIIIIIIIIOOOOOOOONNNNNNRRRRRRTTTTTTLLLLSSSSUUUUDDDDGGGBBCCMMPPFFHHVVWWYYKJXQZ";
 class Bonus extends BABYLON.TransformNode {
     constructor(name, main) {
         super(name, main.scene);
         this.main = main;
+    }
+    catch() {
     }
 }
 class BonusGenerator {
@@ -492,7 +499,18 @@ class BonusGenerator {
         this.main = main;
         this.playerRange = 100;
         this.letterRate = 5000;
-        this.instances = [];
+        this._checkIntersection = () => {
+            for (let i = 0; i < this.bonuses.length; i++) {
+                let b = this.bonuses[i];
+                if (BABYLON.Vector3.DistanceSquared(b.position, this.spaceship.position) < 9) {
+                    this.bonuses.splice(i, 1);
+                    b.catch();
+                    return;
+                }
+            }
+        };
+        this.bonuses = [];
+        this.main.scene.onBeforeRenderObservable.add(this._checkIntersection);
     }
     get grid() {
         return this.main.grid;
@@ -505,7 +523,7 @@ class BonusGenerator {
     }
     _popLetter() {
         let letter = new Letter(this.main);
-        this.instances.push(letter);
+        this.bonuses.push(letter);
         let minX = Math.max(0, this.spaceship.position.x - this.playerRange);
         let maxX = Math.min(LetterGrid.GRID_DISTANCE, this.spaceship.position.x + this.playerRange);
         let minZ = Math.max(0, this.spaceship.position.x - this.playerRange);
@@ -543,5 +561,10 @@ class Letter extends Bonus {
         this.position.y = 1;
         this.rotation.x = Math.PI / 4;
         this.getScene().onBeforeRenderObservable.add(this._update);
+    }
+    catch() {
+        this.main.spaceship.letterStack.add(WordValidator.randomLetter());
+        this.getScene().onBeforeRenderObservable.removeCallback(this._update);
+        this.dispose();
     }
 }
