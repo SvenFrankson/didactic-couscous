@@ -5,14 +5,12 @@ class LetterCell extends BABYLON.Mesh {
         this.i = i;
         this.j = j;
         this.grid = grid;
-        console.log("New Cell " + i + "_" + j);
         let instance = BABYLON.MeshBuilder.CreateGround(this.name + "_mesh", {
             width: LetterGrid.GRID_SIZE * 0.9,
             height: LetterGrid.GRID_SIZE * 0.9
         }, this.getScene());
-        instance.position.x = i * LetterGrid.GRID_SIZE;
-        instance.position.z = j * LetterGrid.GRID_SIZE;
-        console.log(instance.position);
+        instance.position.x = (i + 0.5) * LetterGrid.GRID_SIZE;
+        instance.position.z = (j + 0.5) * LetterGrid.GRID_SIZE;
         let texture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(instance);
         let l = new BABYLON.GUI.TextBlock("l", this.letter);
         l.fontSize = 1000;
@@ -24,9 +22,26 @@ class LetterGrid {
     constructor(main) {
         this.main = main;
         this.grid = [];
+        this.initialize();
     }
     get scene() {
         return this.main.scene;
+    }
+    initialize() {
+        let lines = [];
+        for (let i = 0; i <= LetterGrid.GRID_LENGTH; i++) {
+            lines[i] = [];
+            lines[i].push(new BABYLON.Vector3(i * LetterGrid.GRID_SIZE, 0, 0), new BABYLON.Vector3(i * LetterGrid.GRID_SIZE, 0, (LetterGrid.GRID_LENGTH + 1) * LetterGrid.GRID_SIZE));
+        }
+        for (let i = 0; i <= LetterGrid.GRID_LENGTH; i++) {
+            lines[i + LetterGrid.GRID_LENGTH + 1] = [];
+            lines[i + LetterGrid.GRID_LENGTH + 1].push(new BABYLON.Vector3(0, 0, i * LetterGrid.GRID_SIZE), new BABYLON.Vector3((LetterGrid.GRID_LENGTH + 1) * LetterGrid.GRID_SIZE, 0, i * LetterGrid.GRID_SIZE));
+        }
+        BABYLON.MeshBuilder.CreateLineSystem("GridLineMesh", {
+            lines: lines,
+            updatable: false,
+            instance: undefined
+        }, this.scene);
     }
     worldToGrid(world) {
         let gridPosition = BABYLON.Vector2.Zero();
@@ -35,7 +50,6 @@ class LetterGrid {
         return gridPosition;
     }
     add(l, world) {
-        console.log(world);
         let gridPosition = this.worldToGrid(world);
         if (gridPosition.x >= 0 && gridPosition.x < LetterGrid.GRID_LENGTH) {
             if (gridPosition.y >= 0 && gridPosition.y < LetterGrid.GRID_LENGTH) {
@@ -45,8 +59,7 @@ class LetterGrid {
                     this.grid[i] = [];
                 }
                 if (!this.grid[i][j]) {
-                    this.grid[i][j] = "l";
-                    new LetterCell(l, i, j, this);
+                    this.grid[i][j] = new LetterCell(l, i, j, this);
                 }
             }
         }
