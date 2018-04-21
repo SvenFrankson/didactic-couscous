@@ -1,9 +1,14 @@
 class Spaceship extends BABYLON.Mesh {
 
     private _instance: BABYLON.Mesh;
+    public thrust: number = 1;
+    private _mouseInput: SpaceshipMouseInput;
+    private _keyboardInput: SpaceshipKeyboardInput;
 
-    constructor(scene: BABYLON.Scene) {
-        super("Spaceship", scene);
+    constructor(
+        public main: Main
+    ) {
+        super("Spaceship", main.scene);
         BABYLON.SceneLoader.ImportMesh(
 			"",
 			"./models/spaceship.babylon",
@@ -14,6 +19,15 @@ class Spaceship extends BABYLON.Mesh {
                     meshes[0].parent = this;
                 }
             }
-		);
+        );
+        this.rotationQuaternion = BABYLON.Quaternion.Identity();
+        this._mouseInput = new SpaceshipMouseInput(this);
+        this._keyboardInput = new SpaceshipKeyboardInput(this);
+        this.getScene().onBeforeRenderObservable.add(this._update);
+    }
+
+    private _update = () => {
+        let deltaTime = this.getEngine().getDeltaTime() / 1000;
+        this.translate(BABYLON.Axis.Z, this.thrust * deltaTime, BABYLON.Space.LOCAL);
     }
 }

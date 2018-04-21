@@ -4,6 +4,7 @@ class Main {
 	public engine: BABYLON.Engine;
 	public scene: BABYLON.Scene;
 	public light: BABYLON.HemisphericLight;
+	public ground: BABYLON.Mesh;
 
 	constructor(canvasElement: string) {
 		this.canvas = document.getElementById(canvasElement) as HTMLCanvasElement;
@@ -27,7 +28,12 @@ class Main {
 		let camera = new BABYLON.ArcRotateCamera("MenuCamera", 1, 1, 10, BABYLON.Vector3.Zero(), this.scene);
 		camera.attachControl(this.canvas, true);
 
-		let player = new Spaceship(this.scene);
+		this.ground = BABYLON.MeshBuilder.CreateGround("Ground", {width: 100, height: 100}, this.scene);
+		let groundMaterial = new BABYLON.StandardMaterial("GroundMaterial", this.scene);
+		groundMaterial.diffuseTexture = new BABYLON.Texture("qsdpoiqspdoiqsd", this.scene);
+		this.ground.material = groundMaterial;
+
+		let player = new Spaceship(this);
 	}
 
 	public animate(): void {
