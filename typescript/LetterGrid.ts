@@ -1,5 +1,8 @@
 class LetterCell extends BABYLON.Mesh{
 
+    private _instance: BABYLON.Mesh;
+    private _textBlock: BABYLON.GUI.TextBlock;
+
     constructor(
         public letter: string,
         public i: number,
@@ -7,7 +10,7 @@ class LetterCell extends BABYLON.Mesh{
         public grid: LetterGrid
     ) {
         super("LetterCell-" + i + "-" + j, grid.scene);
-        let instance = BABYLON.MeshBuilder.CreateGround(
+        this._instance = BABYLON.MeshBuilder.CreateGround(
             this.name + "_mesh",
             {
                 width: LetterGrid.GRID_SIZE * 0.9,
@@ -15,13 +18,38 @@ class LetterCell extends BABYLON.Mesh{
             },
             this.getScene()
         );
-        instance.position.x = (i + 0.5) * LetterGrid.GRID_SIZE;
-        instance.position.z = (j + 0.5) * LetterGrid.GRID_SIZE;
-        let texture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(instance);
-        let l = new BABYLON.GUI.TextBlock("l", this.letter);
-        l.fontSize = 1000;
-        l.color = "white";
-        texture.addControl(l);
+        this._instance.position.x = (i + 0.5) * LetterGrid.GRID_SIZE;
+        this._instance.position.z = (j + 0.5) * LetterGrid.GRID_SIZE;
+        let texture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(this._instance);
+        this._textBlock = new BABYLON.GUI.TextBlock("l", this.letter);
+        this._textBlock.fontSize = 1000;
+        this._textBlock.color = "white";
+        texture.addControl(this._textBlock);
+    }
+
+    public setPendingState(): void {
+        if (this._textBlock) {
+            this._textBlock.color = "blue";
+        }
+    }
+
+    public setWrongState(): void {
+        if (this._textBlock) {
+            this._textBlock.color = "red";
+        }
+    }
+
+    public setCorrectState(): void {
+        if (this._textBlock) {
+            this._textBlock.color = "white";
+        }
+    }
+
+    public kill(): void {
+        this._textBlock.dispose();
+        this._instance.dispose();
+        this.dispose();
+        this.grid.grid[this.i][this.j] = undefined;
     }
 }
 
@@ -29,17 +57,24 @@ class LetterGrid {
 
     public static readonly GRID_LENGTH: number = 128;
     public static readonly GRID_SIZE: number = 4;
+    public static readonly PENDING_DELAY: number = 5;
     public grid: LetterCell[][];
+    public pendingCells: LetterCell[];
 
     public get scene(): BABYLON.Scene {
         return this.main.scene;
+    }
+    public get engine(): BABYLON.Engine {
+        return this.main.engine;
     }
 
     constructor(
         public main: Main
     ) {
         this.grid = [];
+        this.pendingCells = [];
         this.initialize();
+        this.scene.onBeforeRenderObservable.add(this._checkPendingCells);
     }
 
     public initialize(): void {
@@ -102,9 +137,77 @@ class LetterGrid {
                     this.grid[i] = [];
                 }
                 if (!this.grid[i][j]) {
-                    this.grid[i][j] = new LetterCell(l, i, j, this);
+                    let newCell = new LetterCell(l, i, j, this);
+                    this.grid[i][j] = newCell;
+                    this.pendingCells.push(newCell);
+                    newCell.setPendingState();
                 }
             }
         }
+    }
+
+    private _throttle: number = 0;
+    private _lastPendingCellCount: number = 0;
+    private _checkPendingCells = () => {
+        if (this.pendingCells.length > 0) {
+            if (this.pendingCells.length !== this._lastPendingCellCount) {
+                this._lastPendingCellCount = this.pendingCells.length;
+                this._throttle = 0;
+                return;
+            }
+            else {
+                this._throttle += this.engine.getDeltaTime() / 1000;
+                if (this._throttle > LetterGrid.PENDING_DELAY) {
+                    this._throttle = 0;
+                    this._validatePendingCells();
+                }
+            }
+        }
+    }
+
+    private _validatePendingCells(): void {
+        // Check for pendingCells alignment.
+        let deltaI: number = 0;
+        let deltaJ: number = 0;
+        for (let i = 0; i < this.pendingCells.length; i++) {
+            let cell0 = this.pendingCells[i];
+            for (let j = 0; j < this.pendingCells.length && j !== i; j++) {
+                let cell1 = this.pendingCells[j];
+                deltaI += Math.abs(cell0.i - cell1.i);
+                deltaJ += Math.abs(cell0.j - cell1.j);
+            }
+        }
+
+        if (deltaI > 0 && deltaJ > 0) {
+            return this._rejectPendingCells();
+        }
+
+        this._acceptPendingCells();
+    }
+
+    private _acceptPendingCells(): void {
+        console.log("Accept pending cells");
+        this.pendingCells.forEach(
+            (c) => {
+                c.setCorrectState();
+            }
+        )
+        this.pendingCells = [];
+    }
+
+    private _rejectPendingCells(): void {
+        console.log("Reject pending cells");
+        this.pendingCells.forEach(
+            (c) => {
+                c.setWrongState();
+                setTimeout(
+                    () => {
+                        c.kill();
+                    },
+                    3000
+                );
+            }
+        )
+        this.pendingCells = [];
     }
 }

@@ -5,27 +5,71 @@ class LetterCell extends BABYLON.Mesh {
         this.i = i;
         this.j = j;
         this.grid = grid;
-        let instance = BABYLON.MeshBuilder.CreateGround(this.name + "_mesh", {
+        this._instance = BABYLON.MeshBuilder.CreateGround(this.name + "_mesh", {
             width: LetterGrid.GRID_SIZE * 0.9,
             height: LetterGrid.GRID_SIZE * 0.9
         }, this.getScene());
-        instance.position.x = (i + 0.5) * LetterGrid.GRID_SIZE;
-        instance.position.z = (j + 0.5) * LetterGrid.GRID_SIZE;
-        let texture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(instance);
-        let l = new BABYLON.GUI.TextBlock("l", this.letter);
-        l.fontSize = 1000;
-        l.color = "white";
-        texture.addControl(l);
+        this._instance.position.x = (i + 0.5) * LetterGrid.GRID_SIZE;
+        this._instance.position.z = (j + 0.5) * LetterGrid.GRID_SIZE;
+        let texture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(this._instance);
+        this._textBlock = new BABYLON.GUI.TextBlock("l", this.letter);
+        this._textBlock.fontSize = 1000;
+        this._textBlock.color = "white";
+        texture.addControl(this._textBlock);
+    }
+    setPendingState() {
+        if (this._textBlock) {
+            this._textBlock.color = "blue";
+        }
+    }
+    setWrongState() {
+        if (this._textBlock) {
+            this._textBlock.color = "red";
+        }
+    }
+    setCorrectState() {
+        if (this._textBlock) {
+            this._textBlock.color = "white";
+        }
+    }
+    kill() {
+        this._textBlock.dispose();
+        this._instance.dispose();
+        this.dispose();
+        this.grid.grid[this.i][this.j] = undefined;
     }
 }
 class LetterGrid {
     constructor(main) {
         this.main = main;
+        this._throttle = 0;
+        this._lastPendingCellCount = 0;
+        this._checkPendingCells = () => {
+            if (this.pendingCells.length > 0) {
+                if (this.pendingCells.length !== this._lastPendingCellCount) {
+                    this._lastPendingCellCount = this.pendingCells.length;
+                    this._throttle = 0;
+                    return;
+                }
+                else {
+                    this._throttle += this.engine.getDeltaTime() / 1000;
+                    if (this._throttle > LetterGrid.PENDING_DELAY) {
+                        this._throttle = 0;
+                        this._validatePendingCells();
+                    }
+                }
+            }
+        };
         this.grid = [];
+        this.pendingCells = [];
         this.initialize();
+        this.scene.onBeforeRenderObservable.add(this._checkPendingCells);
     }
     get scene() {
         return this.main.scene;
+    }
+    get engine() {
+        return this.main.engine;
     }
     initialize() {
         let lines = [];
@@ -59,14 +103,52 @@ class LetterGrid {
                     this.grid[i] = [];
                 }
                 if (!this.grid[i][j]) {
-                    this.grid[i][j] = new LetterCell(l, i, j, this);
+                    let newCell = new LetterCell(l, i, j, this);
+                    this.grid[i][j] = newCell;
+                    this.pendingCells.push(newCell);
+                    newCell.setPendingState();
                 }
             }
         }
     }
+    _validatePendingCells() {
+        // Check for pendingCells alignment.
+        let deltaI = 0;
+        let deltaJ = 0;
+        for (let i = 0; i < this.pendingCells.length; i++) {
+            let cell0 = this.pendingCells[i];
+            for (let j = 0; j < this.pendingCells.length && j !== i; j++) {
+                let cell1 = this.pendingCells[j];
+                deltaI += Math.abs(cell0.i - cell1.i);
+                deltaJ += Math.abs(cell0.j - cell1.j);
+            }
+        }
+        if (deltaI > 0 && deltaJ > 0) {
+            return this._rejectPendingCells();
+        }
+        this._acceptPendingCells();
+    }
+    _acceptPendingCells() {
+        console.log("Accept pending cells");
+        this.pendingCells.forEach((c) => {
+            c.setCorrectState();
+        });
+        this.pendingCells = [];
+    }
+    _rejectPendingCells() {
+        console.log("Reject pending cells");
+        this.pendingCells.forEach((c) => {
+            c.setWrongState();
+            setTimeout(() => {
+                c.kill();
+            }, 3000);
+        });
+        this.pendingCells = [];
+    }
 }
 LetterGrid.GRID_LENGTH = 128;
 LetterGrid.GRID_SIZE = 4;
+LetterGrid.PENDING_DELAY = 5;
 class LetterStack {
     constructor(main) {
         this.main = main;
