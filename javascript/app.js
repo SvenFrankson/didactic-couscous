@@ -280,7 +280,6 @@ class Main {
     }
     createScene() {
         this.scene = new BABYLON.Scene(this.engine);
-        this.scene.clearColor.copyFromFloats(0, 0, 0, 0);
         this.resize();
         this.gui = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("GUI");
         let light = new BABYLON.HemisphericLight("Light", (new BABYLON.Vector3(0.5, 0.65, 0.8)).normalize(), this.scene);
@@ -290,11 +289,23 @@ class Main {
         let height = 5;
         let width = height * ratio;
         let depth = Math.max(height, width);
-        this.ground = BABYLON.MeshBuilder.CreateGround("Ground", { width: 100, height: 100 }, this.scene);
+        this.ground = BABYLON.MeshBuilder.CreateGround("Ground", {
+            width: LetterGrid.GRID_LENGTH * LetterGrid.GRID_SIZE,
+            height: LetterGrid.GRID_LENGTH * LetterGrid.GRID_SIZE
+        }, this.scene);
+        this.ground.position.x = LetterGrid.GRID_LENGTH * LetterGrid.GRID_SIZE * 0.5;
         this.ground.position.y = -0.2;
-        let groundMaterial = new BABYLON.StandardMaterial("GroundMaterial", this.scene);
-        groundMaterial.diffuseTexture = new BABYLON.Texture("qsdpoiqspdoiqsd", this.scene);
-        this.ground.material = groundMaterial;
+        this.ground.position.z = LetterGrid.GRID_LENGTH * LetterGrid.GRID_SIZE * 0.5;
+        this.ground.isVisible = false;
+        let skybox = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 100.0 }, this.scene);
+        skybox.infiniteDistance = true;
+        let skyboxMaterial = new BABYLON.StandardMaterial("skyBox", this.scene);
+        skyboxMaterial.backFaceCulling = false;
+        skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("skyboxes/green-nebulae", this.scene, ["-px.png", "-py.png", "-pz.png", "-nx.png", "-ny.png", "-nz.png"]);
+        skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+        skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+        skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+        skybox.material = skyboxMaterial;
         this.grid = new LetterGrid(this);
         let player = new Spaceship(this);
         player.position.copyFromFloats(30, 0, 30);
