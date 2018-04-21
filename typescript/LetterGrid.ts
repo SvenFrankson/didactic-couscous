@@ -149,6 +149,41 @@ class LetterGrid {
         }
     }
 
+    public safeGridIJ(i: number, j: number): LetterCell {
+        if (this.grid[i]) {
+            return this.grid[i][j];
+        }
+        return undefined;
+    }
+
+    public getHorizontalWordAt(i: number, j: number): string {
+        let word = "";
+        let firstI = i;
+        while (this.safeGridIJ(firstI, j) !== undefined) {
+            firstI--;
+        }
+        firstI++;
+        while (this.safeGridIJ(firstI, j) !== undefined) {
+            word += this.safeGridIJ(firstI, j).letter;
+            firstI++;
+        }
+        return word;
+    }
+
+    public getVerticalWordAt(i: number, j: number): string {
+        let word = "";
+        let firstJ = j;
+        while (this.safeGridIJ(i, firstJ) !== undefined) {
+            firstJ++;
+        }
+        firstJ--;
+        while (this.safeGridIJ(i, firstJ) !== undefined) {
+            word += this.safeGridIJ(i, firstJ).letter;
+            firstJ--;
+        }
+        return word;
+    }
+
     private _throttle: number = 0;
     private _lastPendingCellCount: number = 0;
     private _checkPendingCells = () => {
@@ -185,22 +220,32 @@ class LetterGrid {
             return this._rejectPendingCells();
         }
 
-        let word = "";
-        this.pendingCells = this.pendingCells.sort(
-            (a, b) => {
-                return a.i - b.i + b.j - a.j;
-            }
-        )
+        let wordsToCheck: string[] = [];
         this.pendingCells.forEach(
             (cell) => {
-                word += cell.letter;
+                let word = this.getHorizontalWordAt(cell.i, cell.j);
+                if (word.length > 1 && wordsToCheck.indexOf(word) === -1) {
+                    console.log(word);
+                    wordsToCheck.push(word);
+                }
+                word = this.getVerticalWordAt(cell.i, cell.j);
+                if (word.length > 1 && wordsToCheck.indexOf(word) === -1) {
+                    console.log(word);
+                    wordsToCheck.push(word);
+                }
             }
         )
-        if (this.wordValidator.isValid(word)) {
+        let valid = true;
+        wordsToCheck.forEach(
+            (word) => {
+                valid = valid && this.wordValidator.isValid(word);
+            }
+        )
+        if (valid) {
             this._acceptPendingCells();
+        } else {
+            this._rejectPendingCells();
         }
-
-        this._rejectPendingCells();
     }
 
     private _acceptPendingCells(): void {

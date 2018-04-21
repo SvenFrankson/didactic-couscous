@@ -114,6 +114,38 @@ class LetterGrid {
             }
         }
     }
+    safeGridIJ(i, j) {
+        if (this.grid[i]) {
+            return this.grid[i][j];
+        }
+        return undefined;
+    }
+    getHorizontalWordAt(i, j) {
+        let word = "";
+        let firstI = i;
+        while (this.safeGridIJ(firstI, j) !== undefined) {
+            firstI--;
+        }
+        firstI++;
+        while (this.safeGridIJ(firstI, j) !== undefined) {
+            word += this.safeGridIJ(firstI, j).letter;
+            firstI++;
+        }
+        return word;
+    }
+    getVerticalWordAt(i, j) {
+        let word = "";
+        let firstJ = j;
+        while (this.safeGridIJ(i, firstJ) !== undefined) {
+            firstJ++;
+        }
+        firstJ--;
+        while (this.safeGridIJ(i, firstJ) !== undefined) {
+            word += this.safeGridIJ(i, firstJ).letter;
+            firstJ--;
+        }
+        return word;
+    }
     _validatePendingCells() {
         // Check for pendingCells alignment.
         let deltaI = 0;
@@ -129,17 +161,29 @@ class LetterGrid {
         if (deltaI > 0 && deltaJ > 0) {
             return this._rejectPendingCells();
         }
-        let word = "";
-        this.pendingCells = this.pendingCells.sort((a, b) => {
-            return a.i - b.i + b.j - a.j;
-        });
+        let wordsToCheck = [];
         this.pendingCells.forEach((cell) => {
-            word += cell.letter;
+            let word = this.getHorizontalWordAt(cell.i, cell.j);
+            if (word.length > 1 && wordsToCheck.indexOf(word) === -1) {
+                console.log(word);
+                wordsToCheck.push(word);
+            }
+            word = this.getVerticalWordAt(cell.i, cell.j);
+            if (word.length > 1 && wordsToCheck.indexOf(word) === -1) {
+                console.log(word);
+                wordsToCheck.push(word);
+            }
         });
-        if (this.wordValidator.isValid(word)) {
+        let valid = true;
+        wordsToCheck.forEach((word) => {
+            valid = valid && this.wordValidator.isValid(word);
+        });
+        if (valid) {
             this._acceptPendingCells();
         }
-        this._rejectPendingCells();
+        else {
+            this._rejectPendingCells();
+        }
     }
     _acceptPendingCells() {
         console.log("Accept pending cells");
