@@ -24,6 +24,11 @@ class SpaceshipMouseInput {
                 newDir,
                 this.spaceship.rotationQuaternion
             );
+            this.spaceship.thrust = BABYLON.Scalar.Clamp(
+                BABYLON.Vector3.Distance(this.spaceship.position, pick.pickedPoint) * 0.5,
+                0,
+                10
+            );
         }
     }
 }

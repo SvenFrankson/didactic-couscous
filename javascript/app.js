@@ -332,9 +332,24 @@ class Spaceship extends BABYLON.Mesh {
         super("Spaceship", main.scene);
         this.main = main;
         this.thrust = 1;
+        this.velocity = BABYLON.Vector3.Zero();
         this._update = () => {
             let deltaTime = this.getEngine().getDeltaTime() / 1000;
-            this.translate(BABYLON.Axis.Z, this.thrust * deltaTime, BABYLON.Space.LOCAL);
+            this.velocity.addInPlace(this.getDirection(BABYLON.Axis.Z).scale(this.thrust * deltaTime));
+            let dragX = this.getDirection(BABYLON.Axis.X);
+            let dragXComp = BABYLON.Vector3.Dot(this.velocity, dragX);
+            dragXComp *= Math.abs(dragXComp);
+            dragX.scaleInPlace(dragXComp * deltaTime * 0.2);
+            let dragZ = this.getDirection(BABYLON.Axis.Z);
+            let dragZComp = BABYLON.Vector3.Dot(this.velocity, dragZ);
+            if (dragZComp < 0) {
+                dragZComp *= 10;
+            }
+            dragZComp *= Math.abs(dragZComp);
+            dragZ.scaleInPlace(dragZComp * deltaTime * 0.02);
+            this.velocity.subtractInPlace(dragX).subtractInPlace(dragZ);
+            this.position.addInPlace(this.velocity.scale(deltaTime));
+            console.log(this.thrust);
         };
         BABYLON.SceneLoader.ImportMesh("", "./models/spaceship.babylon", "", this.getScene(), (meshes) => {
             if (meshes[0]) {
@@ -369,10 +384,10 @@ class SpaceshipKeyboardInput {
         this.spacekeyDown = false;
         this._checkInput = () => {
             if (this.spacekeyDown) {
-                this.spaceship.thrust = this.spaceship.thrust * 0.9 + 10 * 0.1;
+                //this.spaceship.thrust = 10;
             }
             else {
-                this.spaceship.thrust = this.spaceship.thrust * 0.9 + 0 * 0.1;
+                //this.spaceship.thrust = 0;
             }
         };
         this.canvas.addEventListener("keyup", (e) => {
@@ -409,6 +424,7 @@ class SpaceshipMouseInput {
                 let newDir = pick.pickedPoint.subtract(this.spaceship.position);
                 let newRight = BABYLON.Vector3.Cross(BABYLON.Axis.Y, newDir);
                 BABYLON.Quaternion.RotationQuaternionFromAxisToRef(newRight, BABYLON.Axis.Y, newDir, this.spaceship.rotationQuaternion);
+                this.spaceship.thrust = BABYLON.Scalar.Clamp(BABYLON.Vector3.Distance(this.spaceship.position, pick.pickedPoint) * 0.5, 0, 10);
             }
         };
         this.scene.onBeforeRenderObservable.add(this._checkInput);

@@ -41,10 +41,10 @@ class SpaceshipKeyboardInput {
 
     private _checkInput = () => {
         if (this.spacekeyDown) {
-            this.spaceship.thrust = this.spaceship.thrust * 0.9 + 10 * 0.1;
+            //this.spaceship.thrust = 10;
         }
         else {
-            this.spaceship.thrust = this.spaceship.thrust * 0.9 + 0 * 0.1;
+            //this.spaceship.thrust = 0;
         }
     }
 }
