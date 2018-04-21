@@ -317,6 +317,7 @@ class Main {
         this.wordValidator.initialize();
         this.bonusGenerator = new BonusGenerator(this);
         this.bonusGenerator.start();
+        new Invader(this);
     }
     animate() {
         this.engine.runRenderLoop(() => {
@@ -566,5 +567,63 @@ class Letter extends Bonus {
         this.main.spaceship.letterStack.add(WordValidator.randomLetter());
         this.getScene().onBeforeRenderObservable.removeCallback(this._update);
         this.dispose();
+    }
+}
+class Invader extends BABYLON.Mesh {
+    constructor(main) {
+        super("Invader", main.scene);
+        this.main = main;
+        this.thrust = 1;
+        this.velocity = BABYLON.Vector3.Zero();
+        this._update = () => {
+            let deltaTime = this.getEngine().getDeltaTime() / 1000;
+            this.thrust = BABYLON.Scalar.Clamp(BABYLON.Vector3.Distance(this.spaceship.position, this.position) * 0.5, 0, 10);
+            this.velocity.addInPlace(this.getDirection(BABYLON.Axis.Z).scale(this.thrust * deltaTime));
+            let dragX = this.getDirection(BABYLON.Axis.X);
+            let dragXComp = BABYLON.Vector3.Dot(this.velocity, dragX);
+            dragXComp *= Math.abs(dragXComp);
+            dragX.scaleInPlace(dragXComp * deltaTime * 0.4);
+            let dragZ = this.getDirection(BABYLON.Axis.Z);
+            let dragZComp = BABYLON.Vector3.Dot(this.velocity, dragZ);
+            if (dragZComp < 0) {
+                dragZComp *= 10;
+            }
+            dragZComp *= Math.abs(dragZComp);
+            dragZ.scaleInPlace(dragZComp * deltaTime * 0.04);
+            let framer = BABYLON.Vector3.Zero();
+            if (this.position.x < 0) {
+                framer.x += Math.abs(this.position.x) * 5 * deltaTime;
+            }
+            if (this.position.x > (LetterGrid.GRID_LENGTH + 1) * LetterGrid.GRID_SIZE) {
+                framer.x -= Math.abs(this.position.x - (LetterGrid.GRID_LENGTH + 1) * LetterGrid.GRID_SIZE) * 5 * deltaTime;
+            }
+            if (this.position.z < 0) {
+                framer.z += Math.abs(this.position.z) * 5 * deltaTime;
+            }
+            if (this.position.z > (LetterGrid.GRID_LENGTH + 1) * LetterGrid.GRID_SIZE) {
+                framer.z -= Math.abs(this.position.z - (LetterGrid.GRID_LENGTH + 1) * LetterGrid.GRID_SIZE) * 5 * deltaTime;
+            }
+            this.velocity.subtractInPlace(dragX).subtractInPlace(dragZ).addInPlace(framer);
+            this.position.addInPlace(this.velocity.scale(deltaTime));
+            this.position.y = 0;
+            let newDir = this.spaceship.position.subtract(this.position);
+            let newRight = BABYLON.Vector3.Cross(BABYLON.Axis.Y, newDir);
+            let newRotation = BABYLON.Quaternion.Identity();
+            BABYLON.Quaternion.RotationQuaternionFromAxisToRef(newRight, BABYLON.Axis.Y, newDir, newRotation);
+            BABYLON.Quaternion.SlerpToRef(this.rotationQuaternion, newRotation, 0.1, this.rotationQuaternion);
+        };
+        BABYLON.SceneLoader.ImportMesh("", "./models/invader-1.babylon", "", this.getScene(), (meshes) => {
+            if (meshes[0]) {
+                meshes[0].parent = this;
+            }
+        });
+        this.rotationQuaternion = BABYLON.Quaternion.Identity();
+        this.getScene().onBeforeRenderObservable.add(this._update);
+    }
+    get grid() {
+        return this.main.grid;
+    }
+    get spaceship() {
+        return this.main.spaceship;
     }
 }

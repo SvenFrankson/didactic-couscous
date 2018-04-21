@@ -69,6 +69,8 @@ class Main {
 
 		this.bonusGenerator = new BonusGenerator(this);
 		this.bonusGenerator.start();
+
+		new Invader(this);
 	}
 
 	public animate(): void {
