@@ -7,6 +7,7 @@ class Main {
 	public ground: BABYLON.Mesh;
 	public gui: BABYLON.GUI.AdvancedDynamicTexture;
 	public grid: LetterGrid;
+	public wordValidator: WordValidator;
 
 	constructor(canvasElement: string) {
 		this.canvas = document.getElementById(canvasElement) as HTMLCanvasElement;
@@ -41,6 +42,9 @@ class Main {
 		player.position.copyFromFloats(30, 0, 30);
 
 		let camera = new SpaceshipCamera(player);
+
+		this.wordValidator = new WordValidator();
+		this.wordValidator.initialize();
 	}
 
 	public animate(): void {

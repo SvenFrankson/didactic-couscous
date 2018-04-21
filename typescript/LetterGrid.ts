@@ -61,6 +61,9 @@ class LetterGrid {
     public grid: LetterCell[][];
     public pendingCells: LetterCell[];
 
+    public get wordValidator(): WordValidator {
+        return this.main.wordValidator;
+    }
     public get scene(): BABYLON.Scene {
         return this.main.scene;
     }
@@ -182,7 +185,22 @@ class LetterGrid {
             return this._rejectPendingCells();
         }
 
-        this._acceptPendingCells();
+        let word = "";
+        this.pendingCells = this.pendingCells.sort(
+            (a, b) => {
+                return a.i - b.i + b.j - a.j;
+            }
+        )
+        this.pendingCells.forEach(
+            (cell) => {
+                word += cell.letter;
+            }
+        )
+        if (this.wordValidator.isValid(word)) {
+            this._acceptPendingCells();
+        }
+
+        this._rejectPendingCells();
     }
 
     private _acceptPendingCells(): void {

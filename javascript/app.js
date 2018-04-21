@@ -65,6 +65,9 @@ class LetterGrid {
         this.initialize();
         this.scene.onBeforeRenderObservable.add(this._checkPendingCells);
     }
+    get wordValidator() {
+        return this.main.wordValidator;
+    }
     get scene() {
         return this.main.scene;
     }
@@ -126,7 +129,17 @@ class LetterGrid {
         if (deltaI > 0 && deltaJ > 0) {
             return this._rejectPendingCells();
         }
-        this._acceptPendingCells();
+        let word = "";
+        this.pendingCells = this.pendingCells.sort((a, b) => {
+            return a.i - b.i + b.j - a.j;
+        });
+        this.pendingCells.forEach((cell) => {
+            word += cell.letter;
+        });
+        if (this.wordValidator.isValid(word)) {
+            this._acceptPendingCells();
+        }
+        this._rejectPendingCells();
     }
     _acceptPendingCells() {
         console.log("Accept pending cells");
@@ -242,6 +255,8 @@ class Main {
         let player = new Spaceship(this);
         player.position.copyFromFloats(30, 0, 30);
         let camera = new SpaceshipCamera(player);
+        this.wordValidator = new WordValidator();
+        this.wordValidator.initialize();
     }
     animate() {
         this.engine.runRenderLoop(() => {
@@ -350,3 +365,30 @@ class SpaceshipMouseInput {
         return this.spaceship.main.ground;
     }
 }
+class WordValidator {
+    constructor() {
+        this._words = [];
+    }
+    initialize() {
+        this._words = [];
+        for (let i = 2; i <= WordValidator.MAX_WORD_LENGTH; i++) {
+            $.get("dictionnary/en/" + i + ".txt", (data) => {
+                this._words[i] = data.split(" ");
+                console.log("Words in " + i + " letters : " + this._words[i].length);
+            });
+        }
+    }
+    isValid(word) {
+        let l = word.length;
+        if (l < 2 || l > WordValidator.MAX_WORD_LENGTH) {
+            return false;
+        }
+        else {
+            let words = this._words[l];
+            console.log("Check word " + word);
+            console.log("In " + words.length + " words");
+            return words.indexOf(word.toLowerCase()) !== -1;
+        }
+    }
+}
+WordValidator.MAX_WORD_LENGTH = 4;
