@@ -14,13 +14,12 @@ class Main {
         let height = 5;
         let width = height * ratio;
         let depth = Math.max(height, width);
-        let camera = new BABYLON.ArcRotateCamera("MenuCamera", 1, 1, 10, BABYLON.Vector3.Zero(), this.scene);
-        camera.attachControl(this.canvas, true);
         this.ground = BABYLON.MeshBuilder.CreateGround("Ground", { width: 100, height: 100 }, this.scene);
         let groundMaterial = new BABYLON.StandardMaterial("GroundMaterial", this.scene);
         groundMaterial.diffuseTexture = new BABYLON.Texture("qsdpoiqspdoiqsd", this.scene);
         this.ground.material = groundMaterial;
         let player = new Spaceship(this);
+        let camera = new SpaceshipCamera(player);
     }
     animate() {
         this.engine.runRenderLoop(() => {
@@ -53,6 +52,18 @@ class Spaceship extends BABYLON.Mesh {
         this.rotationQuaternion = BABYLON.Quaternion.Identity();
         this._mouseInput = new SpaceshipMouseInput(this);
         this._keyboardInput = new SpaceshipKeyboardInput(this);
+        this.getScene().onBeforeRenderObservable.add(this._update);
+    }
+}
+class SpaceshipCamera extends BABYLON.FreeCamera {
+    constructor(spaceship) {
+        super("SpaceshipCamera", spaceship.position.add(new BABYLON.Vector3(0, 20, -5)), spaceship.getScene());
+        this.spaceship = spaceship;
+        this._update = () => {
+            let newPos = this.spaceship.position.add(new BABYLON.Vector3(0, 20, -5));
+            this.position = BABYLON.Vector3.Lerp(this.position, newPos, 0.1);
+        };
+        this.setTarget(spaceship.position);
         this.getScene().onBeforeRenderObservable.add(this._update);
     }
 }

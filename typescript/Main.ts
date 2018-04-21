@@ -25,15 +25,14 @@ class Main {
 		let width = height * ratio;
 		let depth = Math.max(height, width);
 
-		let camera = new BABYLON.ArcRotateCamera("MenuCamera", 1, 1, 10, BABYLON.Vector3.Zero(), this.scene);
-		camera.attachControl(this.canvas, true);
-
 		this.ground = BABYLON.MeshBuilder.CreateGround("Ground", {width: 100, height: 100}, this.scene);
 		let groundMaterial = new BABYLON.StandardMaterial("GroundMaterial", this.scene);
 		groundMaterial.diffuseTexture = new BABYLON.Texture("qsdpoiqspdoiqsd", this.scene);
 		this.ground.material = groundMaterial;
 
 		let player = new Spaceship(this);
+
+		let camera = new SpaceshipCamera(player);
 	}
 
 	public animate(): void {
