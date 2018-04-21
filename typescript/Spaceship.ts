@@ -50,7 +50,22 @@ class Spaceship extends BABYLON.Mesh {
         }
         dragZComp *= Math.abs(dragZComp);
         dragZ.scaleInPlace(dragZComp * deltaTime * 0.02);
-        this.velocity.subtractInPlace(dragX).subtractInPlace(dragZ);
+
+        let framer = BABYLON.Vector3.Zero();
+        if (this.position.x < 0) {
+            framer.x += Math.abs(this.position.x) * 5 * deltaTime;
+        }
+        if (this.position.x > (LetterGrid.GRID_LENGTH + 1) * LetterGrid.GRID_SIZE) {
+            framer.x -= Math.abs(this.position.x - (LetterGrid.GRID_LENGTH + 1) * LetterGrid.GRID_SIZE) * 5 * deltaTime;
+        }
+        if (this.position.z < 0) {
+            framer.z += Math.abs(this.position.z) * 5 * deltaTime;
+        }
+        if (this.position.z > (LetterGrid.GRID_LENGTH + 1) * LetterGrid.GRID_SIZE) {
+            framer.z -= Math.abs(this.position.z - (LetterGrid.GRID_LENGTH + 1) * LetterGrid.GRID_SIZE) * 5 * deltaTime;
+        }
+
+        this.velocity.subtractInPlace(dragX).subtractInPlace(dragZ).addInPlace(framer);
         this.position.addInPlace(this.velocity.scale(deltaTime));
         console.log(this.thrust);
     }

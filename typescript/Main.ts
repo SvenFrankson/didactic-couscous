@@ -32,8 +32,8 @@ class Main {
 		this.ground = BABYLON.MeshBuilder.CreateGround(
 			"Ground",
 			{
-				width: LetterGrid.GRID_LENGTH * LetterGrid.GRID_SIZE,
-				height: LetterGrid.GRID_LENGTH * LetterGrid.GRID_SIZE
+				width: LetterGrid.GRID_LENGTH * LetterGrid.GRID_SIZE * 2,
+				height: LetterGrid.GRID_LENGTH * LetterGrid.GRID_SIZE * 2
 			},
 			this.scene
 		);
