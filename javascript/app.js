@@ -391,4 +391,4 @@ class WordValidator {
         }
     }
 }
-WordValidator.MAX_WORD_LENGTH = 4;
+WordValidator.MAX_WORD_LENGTH = 6;
