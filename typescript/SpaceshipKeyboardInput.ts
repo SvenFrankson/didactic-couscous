@@ -27,6 +27,15 @@ class SpaceshipKeyboardInput {
                 }
             }
         )
+        this.canvas.addEventListener(
+            "keydown",
+            (e) => {
+                if (e.keyCode === 49) {
+                    let letter = this.spaceship.letterStack.removeAt(0);
+                    this.spaceship.grid.add(letter, this.spaceship.position);
+                }
+            }
+        )
         this.scene.onBeforeRenderObservable.add(this._checkInput);
     }
 

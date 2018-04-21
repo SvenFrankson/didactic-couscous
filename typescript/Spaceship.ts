@@ -4,6 +4,11 @@ class Spaceship extends BABYLON.Mesh {
     public thrust: number = 1;
     private _mouseInput: SpaceshipMouseInput;
     private _keyboardInput: SpaceshipKeyboardInput;
+    public letterStack: LetterStack;
+
+    public get grid(): LetterGrid {
+        return this.main.grid;
+    }
 
     constructor(
         public main: Main
@@ -24,6 +29,7 @@ class Spaceship extends BABYLON.Mesh {
         this._mouseInput = new SpaceshipMouseInput(this);
         this._keyboardInput = new SpaceshipKeyboardInput(this);
         this.getScene().onBeforeRenderObservable.add(this._update);
+        this.letterStack = new LetterStack(this.main);
     }
 
     private _update = () => {

@@ -14,7 +14,7 @@ class SpaceshipCamera extends BABYLON.FreeCamera {
 
     private _update = () => {
         let newPos = this.spaceship.position.add(
-            new BABYLON.Vector3(0, 20, -5)
+            new BABYLON.Vector3(0, 35, -10)
         )
         this.position = BABYLON.Vector3.Lerp(
             this.position,
