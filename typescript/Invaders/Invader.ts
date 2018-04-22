@@ -72,7 +72,7 @@ class Invader extends BABYLON.Mesh {
                         if (m instanceof BABYLON.Mesh) {
                             m.renderOutline = true;
                             m.outlineColor = BABYLON.Color3.White();
-                            m.outlineWidth = 0.025 * this.generator.invaderLevel;
+                            m.outlineWidth = 0.025;
                         }
                     }
                 )
