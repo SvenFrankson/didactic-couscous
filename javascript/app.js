@@ -955,14 +955,19 @@ class Invader extends BABYLON.Mesh {
             this.power *= 2;
             this.firerate *= 2;
         }
+        this.stamina *= this.generator.invaderLevel;
+        this.maxThrust *= this.generator.invaderLevel;
+        this.power *= this.generator.invaderLevel;
+        this.maxThrust *= this.generator.invaderLevel;
         this._hitPoints = this.stamina;
         BABYLON.SceneLoader.ImportMesh("", "./models/invader-" + type + ".babylon", "", this.getScene(), (meshes) => {
             meshes.forEach((m) => {
                 m.parent = this;
+                m.scaling.copyFromFloats(this.generator.invaderLevel, this.generator.invaderLevel, this.generator.invaderLevel);
                 if (m instanceof BABYLON.Mesh) {
                     m.renderOutline = true;
                     m.outlineColor = BABYLON.Color3.White();
-                    m.outlineWidth = 0.025;
+                    m.outlineWidth = 0.025 * this.generator.invaderLevel;
                 }
             });
         });
@@ -1008,6 +1013,16 @@ class InvaderGenerator {
         this.main = main;
         this.playerRange = 100;
         this.invaderRate = 5000;
+        this.invaderLevelTime = 30;
+        this.invaderLevel = 1;
+        this.timer = 0;
+        this._updateInvadersLevel = () => {
+            this.timer += this.main.engine.getDeltaTime() / 1000;
+            if (this.timer > this.invaderLevelTime) {
+                this.timer = 0;
+                this.invaderLevel *= 1.1;
+            }
+        };
         this.invaders = [];
     }
     get grid() {
@@ -1018,6 +1033,7 @@ class InvaderGenerator {
     }
     start() {
         this._popInvader();
+        this.main.scene.onBeforeRenderObservable.add(this._updateInvadersLevel);
     }
     _popInvader() {
         let invader = new Invader(this.main);

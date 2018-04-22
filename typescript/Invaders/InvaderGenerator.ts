@@ -5,6 +5,9 @@ class InvaderGenerator {
     public playerRange: number = 100;
     public invaderRate: number = 5000;
 
+    public invaderLevelTime: number = 30;
+    public invaderLevel: number = 1;
+
     public get grid(): LetterGrid {
         return this.main.grid;
     }
@@ -18,6 +21,16 @@ class InvaderGenerator {
 
     public start(): void {
         this._popInvader();
+        this.main.scene.onBeforeRenderObservable.add(this._updateInvadersLevel);
+    }
+
+    private timer: number = 0;
+    private _updateInvadersLevel = () => {
+        this.timer += this.main.engine.getDeltaTime() / 1000;
+        if (this.timer > this.invaderLevelTime) {
+            this.timer = 0;
+            this.invaderLevel *= 1.1;
+        }
     }
 
     private _popInvader(): void {

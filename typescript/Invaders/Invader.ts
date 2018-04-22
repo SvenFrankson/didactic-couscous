@@ -50,6 +50,10 @@ class Invader extends BABYLON.Mesh {
             this.power *= 2;
             this.firerate *= 2;
         }
+        this.stamina *= this.generator.invaderLevel;
+        this.maxThrust *= this.generator.invaderLevel;
+        this.power *= this.generator.invaderLevel;
+        this.maxThrust *= this.generator.invaderLevel;
         this._hitPoints = this.stamina;
         BABYLON.SceneLoader.ImportMesh(
 			"",
@@ -60,10 +64,15 @@ class Invader extends BABYLON.Mesh {
                 meshes.forEach(
                     (m) => {
                         m.parent = this;
+                        m.scaling.copyFromFloats(
+                            this.generator.invaderLevel,
+                            this.generator.invaderLevel,
+                            this.generator.invaderLevel
+                        );
                         if (m instanceof BABYLON.Mesh) {
                             m.renderOutline = true;
                             m.outlineColor = BABYLON.Color3.White();
-                            m.outlineWidth = 0.025;
+                            m.outlineWidth = 0.025 * this.generator.invaderLevel;
                         }
                     }
                 )
