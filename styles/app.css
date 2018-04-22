@@ -8,7 +8,8 @@ html, body {
     overflow-x: hidden;
     margin: 0;
     padding: 0;
-    background-image: url("../textures/stars.jpg");
+    background-image: url("../textures/stars.png");
+    background-size: cover;
     color: white;
 }
 
@@ -24,6 +25,16 @@ html, body {
 
 .main-menu {
     z-index: 2;
+}
+
+.tips {
+    z-index: 2;
+    position: absolute;
+    text-align: center;
+    bottom: 3%;
+    width: 100%;
+    font-size: 50px;
+    font-family: "Helvetica";
 }
 
 #title {

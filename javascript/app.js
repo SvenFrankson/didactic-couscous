@@ -193,6 +193,7 @@ class LetterGrid {
         }
     }
     _acceptPendingCells() {
+        TipsGenerator.ShowRandomGood();
         let counter = 0;
         let l = Math.floor(this.pendingCells.length / 2);
         this.pendingCells.forEach((c) => {
@@ -210,6 +211,7 @@ class LetterGrid {
         this.pendingCells = [];
     }
     _rejectPendingCells() {
+        TipsGenerator.ShowRandomBad();
         this.pendingCells.forEach((c) => {
             c.setWrongState();
             setTimeout(() => {
@@ -878,6 +880,31 @@ class SpaceshipMouseInput {
     }
     get ground() {
         return this.spaceship.main.ground;
+    }
+}
+class TipsGenerator {
+    static Show(id) {
+        clearTimeout(TipsGenerator.randomHandle);
+        $(".tips").hide();
+        $("#" + id).show();
+        TipsGenerator.randomHandle = setTimeout(() => {
+            $("#" + id).hide();
+            TipsGenerator.randomHandle = setTimeout(() => {
+                TipsGenerator.ShowRandomTips();
+            }, 2000);
+        }, 4000);
+    }
+    static ShowRandomTips() {
+        let r = Math.floor(Math.random() * 6 + 1);
+        TipsGenerator.Show("tips-" + r);
+    }
+    static ShowRandomGood() {
+        let r = Math.floor(Math.random() * 4 + 1);
+        TipsGenerator.Show("good-" + r);
+    }
+    static ShowRandomBad() {
+        let r = Math.floor(Math.random() * 4 + 1);
+        TipsGenerator.Show("bad-" + r);
     }
 }
 class WordValidator {
