@@ -48,12 +48,14 @@ class SpaceshipMouseInput {
         if (pick && pick.hit) {
             let newDir = pick.pickedPoint.subtract(this.spaceship.position);
             let newRight = BABYLON.Vector3.Cross(BABYLON.Axis.Y, newDir);
+            let newRotation = BABYLON.Quaternion.Identity();
             BABYLON.Quaternion.RotationQuaternionFromAxisToRef(
                 newRight,
                 BABYLON.Axis.Y,
                 newDir,
-                this.spaceship.rotationQuaternion
+                newRotation
             );
+            BABYLON.Quaternion.SlerpToRef(this.spaceship.rotationQuaternion, newRotation, 0.1, this.spaceship.rotationQuaternion);
             this.spaceship.thrust = BABYLON.Scalar.Clamp(
                 BABYLON.Vector3.Distance(this.spaceship.position, pick.pickedPoint) * 0.5,
                 0,

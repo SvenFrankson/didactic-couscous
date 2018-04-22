@@ -1,7 +1,8 @@
 class Spaceship extends BABYLON.Mesh {
 
     private _instance: BABYLON.Mesh;
-    public thrust: number = 1;
+    public straff: number = 0;
+    public thrust: number = 0;
     public mouseInput: SpaceshipMouseInput;
     private _keyboardInput: SpaceshipKeyboardInput;
     public letterStack: LetterStack;
@@ -118,6 +119,7 @@ class Spaceship extends BABYLON.Mesh {
             staminaTitleUI.width = "160px";
             staminaTitleUI.height = "64px";
             staminaTitleUI.fontSize = "30px";
+            staminaTitleUI.fontFamily = "Komikax";
             staminaTitleUI.color = "white";
             this.gui.addControl(staminaTitleUI);
 
@@ -131,6 +133,7 @@ class Spaceship extends BABYLON.Mesh {
             shieldTitleUI.width = "160px";
             shieldTitleUI.height = "64px";
             shieldTitleUI.fontSize = "30px";
+            shieldTitleUI.fontFamily = "Komikax";
             shieldTitleUI.color = "white";
             this.gui.addControl(shieldTitleUI);
 
@@ -144,10 +147,11 @@ class Spaceship extends BABYLON.Mesh {
             powerTitleUI.width = "160px";
             powerTitleUI.height = "64px";
             powerTitleUI.fontSize = "30px";
+            powerTitleUI.fontFamily = "Komikax";
             powerTitleUI.color = "white";
             this.gui.addControl(powerTitleUI);
 
-            let firerateTitleUI = new BABYLON.GUI.TextBlock("firerateTitleUI", "POWER");
+            let firerateTitleUI = new BABYLON.GUI.TextBlock("firerateTitleUI", "FIRERATE");
             firerateTitleUI.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
             firerateTitleUI.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
             firerateTitleUI.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -157,6 +161,7 @@ class Spaceship extends BABYLON.Mesh {
             firerateTitleUI.width = "160px";
             firerateTitleUI.height = "64px";
             firerateTitleUI.fontSize = "30px";
+            firerateTitleUI.fontFamily = "Komikax";
             firerateTitleUI.color = "white";
             this.gui.addControl(firerateTitleUI);
 
@@ -220,6 +225,9 @@ class Spaceship extends BABYLON.Mesh {
         let deltaTime = this.getEngine().getDeltaTime() / 1000;
         this.velocity.addInPlace(
             this.getDirection(BABYLON.Axis.Z).scale(this.thrust * deltaTime)
+        );
+        this.velocity.addInPlace(
+            this.getDirection(BABYLON.Axis.X).scale(this.straff * deltaTime)
         );
         let dragX = this.getDirection(BABYLON.Axis.X);
         let dragXComp = BABYLON.Vector3.Dot(this.velocity, dragX);

@@ -364,17 +364,25 @@ class Main {
     resize() {
         this.engine.resize();
     }
+    static Play() {
+        $("#render-canvas").show();
+        $(".main-menu").hide();
+        let game = new Main("render-canvas");
+        game.createScene();
+        game.animate();
+    }
 }
 window.addEventListener("DOMContentLoaded", () => {
-    let game = new Main("render-canvas");
-    game.createScene();
-    game.animate();
+    $("#play").on("click", () => {
+        Main.Play();
+    });
 });
 class Spaceship extends BABYLON.Mesh {
     constructor(main) {
         super("Spaceship", main.scene);
         this.main = main;
-        this.thrust = 1;
+        this.straff = 0;
+        this.thrust = 0;
         this.velocity = BABYLON.Vector3.Zero();
         this._update = () => {
             if (this._coolDown > 0) {
@@ -382,6 +390,7 @@ class Spaceship extends BABYLON.Mesh {
             }
             let deltaTime = this.getEngine().getDeltaTime() / 1000;
             this.velocity.addInPlace(this.getDirection(BABYLON.Axis.Z).scale(this.thrust * deltaTime));
+            this.velocity.addInPlace(this.getDirection(BABYLON.Axis.X).scale(this.straff * deltaTime));
             let dragX = this.getDirection(BABYLON.Axis.X);
             let dragXComp = BABYLON.Vector3.Dot(this.velocity, dragX);
             dragXComp *= Math.abs(dragXComp);
@@ -496,6 +505,7 @@ class Spaceship extends BABYLON.Mesh {
         staminaTitleUI.width = "160px";
         staminaTitleUI.height = "64px";
         staminaTitleUI.fontSize = "30px";
+        staminaTitleUI.fontFamily = "Komikax";
         staminaTitleUI.color = "white";
         this.gui.addControl(staminaTitleUI);
         let shieldTitleUI = new BABYLON.GUI.TextBlock("shieldTitleUI", "SHIELD");
@@ -508,6 +518,7 @@ class Spaceship extends BABYLON.Mesh {
         shieldTitleUI.width = "160px";
         shieldTitleUI.height = "64px";
         shieldTitleUI.fontSize = "30px";
+        shieldTitleUI.fontFamily = "Komikax";
         shieldTitleUI.color = "white";
         this.gui.addControl(shieldTitleUI);
         let powerTitleUI = new BABYLON.GUI.TextBlock("powerTitleUI", "POWER");
@@ -520,9 +531,10 @@ class Spaceship extends BABYLON.Mesh {
         powerTitleUI.width = "160px";
         powerTitleUI.height = "64px";
         powerTitleUI.fontSize = "30px";
+        powerTitleUI.fontFamily = "Komikax";
         powerTitleUI.color = "white";
         this.gui.addControl(powerTitleUI);
-        let firerateTitleUI = new BABYLON.GUI.TextBlock("firerateTitleUI", "POWER");
+        let firerateTitleUI = new BABYLON.GUI.TextBlock("firerateTitleUI", "FIRERATE");
         firerateTitleUI.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
         firerateTitleUI.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
         firerateTitleUI.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -532,6 +544,7 @@ class Spaceship extends BABYLON.Mesh {
         firerateTitleUI.width = "160px";
         firerateTitleUI.height = "64px";
         firerateTitleUI.fontSize = "30px";
+        firerateTitleUI.fontFamily = "Komikax";
         firerateTitleUI.color = "white";
         this.gui.addControl(firerateTitleUI);
         this.staminaTextUI = new BABYLON.GUI.TextBlock("staminaTextUI", "LvL 1");
@@ -606,6 +619,8 @@ class SpaceshipCamera extends BABYLON.FreeCamera {
 class SpaceshipKeyboardInput {
     constructor(spaceship) {
         this.spaceship = spaceship;
+        this.leftKeyDown = false;
+        this.rightKeyDown = false;
         this.spacekeyDown = false;
         this._checkInput = () => {
             if (this.spacekeyDown) {
@@ -614,15 +629,39 @@ class SpaceshipKeyboardInput {
             else {
                 //this.spaceship.thrust = 0;
             }
+            if (this.leftKeyDown && this.rightKeyDown) {
+                this.spaceship.straff = 0;
+            }
+            else if (this.leftKeyDown) {
+                this.spaceship.straff = -10;
+            }
+            else if (this.rightKeyDown) {
+                this.spaceship.straff = 10;
+            }
+            else {
+                this.spaceship.straff = 0;
+            }
         };
         this.canvas.addEventListener("keyup", (e) => {
             if (e.keyCode === 32) {
                 this.spacekeyDown = false;
             }
+            if (e.keyCode === 37) {
+                this.leftKeyDown = false;
+            }
+            if (e.keyCode === 39) {
+                this.rightKeyDown = false;
+            }
         });
         this.canvas.addEventListener("keydown", (e) => {
             if (e.keyCode === 32) {
                 this.spacekeyDown = true;
+            }
+            if (e.keyCode === 37) {
+                this.leftKeyDown = true;
+            }
+            if (e.keyCode === 39) {
+                this.rightKeyDown = true;
             }
         });
         this.canvas.addEventListener("keydown", (e) => {
@@ -660,7 +699,9 @@ class SpaceshipMouseInput {
             if (pick && pick.hit) {
                 let newDir = pick.pickedPoint.subtract(this.spaceship.position);
                 let newRight = BABYLON.Vector3.Cross(BABYLON.Axis.Y, newDir);
-                BABYLON.Quaternion.RotationQuaternionFromAxisToRef(newRight, BABYLON.Axis.Y, newDir, this.spaceship.rotationQuaternion);
+                let newRotation = BABYLON.Quaternion.Identity();
+                BABYLON.Quaternion.RotationQuaternionFromAxisToRef(newRight, BABYLON.Axis.Y, newDir, newRotation);
+                BABYLON.Quaternion.SlerpToRef(this.spaceship.rotationQuaternion, newRotation, 0.1, this.spaceship.rotationQuaternion);
                 this.spaceship.thrust = BABYLON.Scalar.Clamp(BABYLON.Vector3.Distance(this.spaceship.position, pick.pickedPoint) * 0.5, 0, 10);
             }
         };

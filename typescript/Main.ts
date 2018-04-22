@@ -86,12 +86,20 @@ class Main {
 	public resize(): void {
 		this.engine.resize();
 	}
+
+	public static Play(): void {
+		$("#render-canvas").show();
+		$(".main-menu").hide();
+		let game: Main = new Main("render-canvas");
+		game.createScene();
+		game.animate();
+	}
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-	let game: Main = new Main("render-canvas");
-	game.createScene();
-	game.animate();
-});
+	$("#play").on("click", () => {
+		Main.Play();
+	})
+})
 
 
