@@ -30,9 +30,11 @@ class SpaceshipKeyboardInput {
         this.canvas.addEventListener(
             "keydown",
             (e) => {
-                if (e.keyCode === 49) {
-                    let letter = this.spaceship.letterStack.removeAt(0);
-                    this.spaceship.grid.add(letter, this.spaceship.position);
+                for (let i = 0; i < LetterStack.MAX_LENGTH; i++) {
+                    if (e.keyCode === 49 + i) {
+                        let letter = this.spaceship.letterStack.removeAt(i);
+                        this.spaceship.grid.add(letter, this.spaceship.position);
+                    }
                 }
             }
         )
