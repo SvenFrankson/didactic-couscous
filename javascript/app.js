@@ -919,7 +919,7 @@ class Invader extends BABYLON.Mesh {
             BABYLON.Quaternion.RotationQuaternionFromAxisToRef(newRight, BABYLON.Axis.Y, newDir, newRotation);
             BABYLON.Quaternion.SlerpToRef(this.rotationQuaternion, newRotation, 0.1, this.rotationQuaternion);
         };
-        BABYLON.SceneLoader.ImportMesh("", "./models/invader-" + Math.floor(Math.random() * 2 + 1) + ".babylon", "", this.getScene(), (meshes) => {
+        BABYLON.SceneLoader.ImportMesh("", "./models/invader-" + Math.floor(Math.random() * 5 + 1) + ".babylon", "", this.getScene(), (meshes) => {
             meshes.forEach((m) => {
                 m.parent = this;
                 if (m instanceof BABYLON.Mesh) {
