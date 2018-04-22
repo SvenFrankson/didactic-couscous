@@ -30,6 +30,7 @@ class Spaceship extends BABYLON.Mesh {
     private _staminaXp: number = 0;
     public upStamina(): void {
         this._staminaXp++;
+        this.hitPoints++;
         if (this._staminaXp > this.staminaLevel) {
             this.staminaLevel++;
             this.regenCooldown--;
@@ -41,6 +42,7 @@ class Spaceship extends BABYLON.Mesh {
     private _shieldXp: number = 0;
     public upShield(): void {
         this._shieldXp++;
+        this.hitPoints++;
         if (this._shieldXp > this.shieldLevel) {
             this.shieldLevel++;
             this.shieldCoef = Math.pow(1.1, this.shieldLevel);
@@ -51,6 +53,7 @@ class Spaceship extends BABYLON.Mesh {
     private _powerXp: number = 0;
     public upPower(): void {
         this._powerXp++;
+        this.hitPoints++;
         if (this._powerXp > this.powerLevel) {
             this.powerLevel++;
             this.powerCoef = Math.pow(1.1, this.powerLevel);
@@ -61,6 +64,7 @@ class Spaceship extends BABYLON.Mesh {
     private _firerateXp: number = 0;
     public upFirerate(): void {
         this._firerateXp++;
+        this.hitPoints++;
         if (this._firerateXp > this.firerateLevel) {
             this.firerateLevel++;
             this.firerateCoef = Math.pow(1.1, this.firerateLevel);
