@@ -208,7 +208,7 @@ class Spaceship extends BABYLON.Mesh {
         new Shot(
             true,
             this.position,
-            this.getDirection(BABYLON.Axis.Z),
+            this.rotationQuaternion,
             20,
             30,
             100,

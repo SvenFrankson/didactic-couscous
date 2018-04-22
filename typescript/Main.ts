@@ -1,5 +1,6 @@
 class Main {
 
+	public static instance: Main;
 	public canvas: HTMLCanvasElement;
 	public engine: BABYLON.Engine;
 	public scene: BABYLON.Scene;
@@ -13,6 +14,7 @@ class Main {
 	public spaceship: Spaceship;
 
 	constructor(canvasElement: string) {
+		Main.instance = this;
 		this.canvas = document.getElementById(canvasElement) as HTMLCanvasElement;
 		this.engine = new BABYLON.Engine(this.canvas, true);
 	}

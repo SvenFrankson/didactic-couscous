@@ -148,7 +148,7 @@ class Invader extends BABYLON.Mesh {
         new Shot(
             false,
             this.position,
-            this.getDirection(BABYLON.Axis.Z),
+            this.rotationQuaternion,
             20,
             this.power,
             100,
