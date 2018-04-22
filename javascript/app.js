@@ -307,9 +307,9 @@ class Main {
         this.scene = new BABYLON.Scene(this.engine);
         this.resize();
         this.gui = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("GUI");
-        let light = new BABYLON.HemisphericLight("Light", (new BABYLON.Vector3(0.5, 0.65, 0.8)).normalize(), this.scene);
-        light.groundColor.copyFromFloats(0, 0, 0);
-        light.intensity = 0.7;
+        let light = new BABYLON.HemisphericLight("Light", (new BABYLON.Vector3(1, 3, 2)).normalize(), this.scene);
+        light.groundColor.copyFromFloats(0.5, 0.5, 0.5);
+        light.intensity = 1;
         let ratio = this.canvas.clientWidth / this.canvas.clientHeight;
         let height = 5;
         let width = height * ratio;
@@ -886,14 +886,14 @@ class Invader extends BABYLON.Mesh {
             let dragX = this.getDirection(BABYLON.Axis.X);
             let dragXComp = BABYLON.Vector3.Dot(this.velocity, dragX);
             dragXComp *= Math.abs(dragXComp);
-            dragX.scaleInPlace(dragXComp * deltaTime * 0.4);
+            dragX.scaleInPlace(dragXComp * deltaTime * 0.8);
             let dragZ = this.getDirection(BABYLON.Axis.Z);
             let dragZComp = BABYLON.Vector3.Dot(this.velocity, dragZ);
             if (dragZComp < 0) {
                 dragZComp *= 10;
             }
             dragZComp *= Math.abs(dragZComp);
-            dragZ.scaleInPlace(dragZComp * deltaTime * 0.04);
+            dragZ.scaleInPlace(dragZComp * deltaTime * 0.08);
             let framer = BABYLON.Vector3.Zero();
             if (this.position.x < 0) {
                 framer.x += Math.abs(this.position.x) * 5 * deltaTime;
@@ -920,9 +920,14 @@ class Invader extends BABYLON.Mesh {
             BABYLON.Quaternion.SlerpToRef(this.rotationQuaternion, newRotation, 0.1, this.rotationQuaternion);
         };
         BABYLON.SceneLoader.ImportMesh("", "./models/invader-1.babylon", "", this.getScene(), (meshes) => {
-            if (meshes[0]) {
-                meshes[0].parent = this;
-            }
+            meshes.forEach((m) => {
+                m.parent = this;
+                if (m instanceof BABYLON.Mesh) {
+                    m.renderOutline = true;
+                    m.outlineColor = BABYLON.Color3.White();
+                    m.outlineWidth = 0.025;
+                }
+            });
         });
         this.rotationQuaternion = BABYLON.Quaternion.Identity();
         this.getScene().onBeforeRenderObservable.add(this._update);

@@ -26,9 +26,16 @@ class Invader extends BABYLON.Mesh {
 			"",
             this.getScene(),
             (meshes) => {
-                if (meshes[0]) {
-                    meshes[0].parent = this;
-                }
+                meshes.forEach(
+                    (m) => {
+                        m.parent = this;
+                        if (m instanceof BABYLON.Mesh) {
+                            m.renderOutline = true;
+                            m.outlineColor = BABYLON.Color3.White();
+                            m.outlineWidth = 0.025;
+                        }
+                    }
+                )
             }
         );
         this.rotationQuaternion = BABYLON.Quaternion.Identity();
@@ -54,14 +61,14 @@ class Invader extends BABYLON.Mesh {
         let dragX = this.getDirection(BABYLON.Axis.X);
         let dragXComp = BABYLON.Vector3.Dot(this.velocity, dragX);
         dragXComp *= Math.abs(dragXComp);
-        dragX.scaleInPlace(dragXComp * deltaTime * 0.4);
+        dragX.scaleInPlace(dragXComp * deltaTime * 0.8);
         let dragZ = this.getDirection(BABYLON.Axis.Z);
         let dragZComp = BABYLON.Vector3.Dot(this.velocity, dragZ);
         if (dragZComp < 0) {
             dragZComp *= 10;
         }
         dragZComp *= Math.abs(dragZComp);
-        dragZ.scaleInPlace(dragZComp * deltaTime * 0.04);
+        dragZ.scaleInPlace(dragZComp * deltaTime * 0.08);
 
         let framer = BABYLON.Vector3.Zero();
         if (this.position.x < 0) {

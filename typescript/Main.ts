@@ -23,9 +23,9 @@ class Main {
 
 		this.gui = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("GUI");
 
-		let light = new BABYLON.HemisphericLight("Light", (new BABYLON.Vector3(0.5, 0.65, 0.8)).normalize(), this.scene);
-		light.groundColor.copyFromFloats(0, 0, 0);
-		light.intensity = 0.7;
+		let light = new BABYLON.HemisphericLight("Light", (new BABYLON.Vector3(1, 3, 2)).normalize(), this.scene);
+		light.groundColor.copyFromFloats(0.5, 0.5, 0.5);
+		light.intensity = 1;
 
 		let ratio: number =this.canvas.clientWidth /this.canvas.clientHeight;
 		let height = 5;
