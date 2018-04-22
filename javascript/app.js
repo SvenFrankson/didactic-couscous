@@ -867,28 +867,36 @@ class StaminaBonus extends Bonus {
     }
 }
 class Invader extends BABYLON.Mesh {
-    constructor(main) {
+    constructor(main, type = -1) {
         super("Invader", main.scene);
         this.main = main;
-        this.hp = 50;
-        this.thrust = 1;
-        this.velocity = BABYLON.Vector3.Zero();
+        this._thrust = 1;
+        this._velocity = BABYLON.Vector3.Zero();
+        this._hitPoints = 50;
+        // caracteristics
+        this.maxThrust = 5;
+        this.stamina = 50;
+        this.power = 10;
+        this.firerate = 0.5;
         this._update = () => {
+            if (this._coolDown > 0) {
+                this._coolDown--;
+            }
             let deltaTime = this.getEngine().getDeltaTime() / 1000;
             let distanceToTarget = BABYLON.Vector3.Distance(this.spaceship.position, this.position);
             if (distanceToTarget > 5) {
-                this.thrust = BABYLON.Scalar.Clamp(distanceToTarget * 0.5, 0, 10);
+                this._thrust = BABYLON.Scalar.Clamp(distanceToTarget * 0.5, 0, this.maxThrust);
             }
             else {
-                this.thrust = 10;
+                this._thrust = this.maxThrust;
             }
-            this.velocity.addInPlace(this.getDirection(BABYLON.Axis.Z).scale(this.thrust * deltaTime));
+            this._velocity.addInPlace(this.getDirection(BABYLON.Axis.Z).scale(this._thrust * deltaTime));
             let dragX = this.getDirection(BABYLON.Axis.X);
-            let dragXComp = BABYLON.Vector3.Dot(this.velocity, dragX);
+            let dragXComp = BABYLON.Vector3.Dot(this._velocity, dragX);
             dragXComp *= Math.abs(dragXComp);
             dragX.scaleInPlace(dragXComp * deltaTime * 0.8);
             let dragZ = this.getDirection(BABYLON.Axis.Z);
-            let dragZComp = BABYLON.Vector3.Dot(this.velocity, dragZ);
+            let dragZComp = BABYLON.Vector3.Dot(this._velocity, dragZ);
             if (dragZComp < 0) {
                 dragZComp *= 10;
             }
@@ -907,8 +915,8 @@ class Invader extends BABYLON.Mesh {
             if (this.position.z > (LetterGrid.GRID_LENGTH + 1) * LetterGrid.GRID_SIZE) {
                 framer.z -= Math.abs(this.position.z - (LetterGrid.GRID_LENGTH + 1) * LetterGrid.GRID_SIZE) * 5 * deltaTime;
             }
-            this.velocity.subtractInPlace(dragX).subtractInPlace(dragZ).addInPlace(framer);
-            this.position.addInPlace(this.velocity.scale(deltaTime));
+            this._velocity.subtractInPlace(dragX).subtractInPlace(dragZ).addInPlace(framer);
+            this.position.addInPlace(this._velocity.scale(deltaTime));
             this.position.y = 0;
             let newDir = this.spaceship.position.subtract(this.position);
             if (distanceToTarget < 5) {
@@ -918,8 +926,36 @@ class Invader extends BABYLON.Mesh {
             let newRotation = BABYLON.Quaternion.Identity();
             BABYLON.Quaternion.RotationQuaternionFromAxisToRef(newRight, BABYLON.Axis.Y, newDir, newRotation);
             BABYLON.Quaternion.SlerpToRef(this.rotationQuaternion, newRotation, 0.1, this.rotationQuaternion);
+            if (BABYLON.Vector3.Dot(newDir, this.getDirection(BABYLON.Axis.Z)) > 0.9) {
+                this.shoot();
+            }
         };
-        BABYLON.SceneLoader.ImportMesh("", "./models/invader-" + Math.floor(Math.random() * 5 + 1) + ".babylon", "", this.getScene(), (meshes) => {
+        this._coolDown = 0;
+        if (type = -1) {
+            type = Math.floor(Math.random() * 5 + 1);
+        }
+        if (type === 1) {
+            this.maxThrust *= 2;
+            this.power *= 2;
+        }
+        if (type === 2) {
+            this.stamina *= 2;
+            this.firerate *= 2;
+        }
+        if (type === 3) {
+            this.maxThrust *= 2;
+            this.firerate *= 2;
+        }
+        if (type === 4) {
+            this.stamina *= 2;
+            this.power *= 2;
+        }
+        if (type === 5) {
+            this.power *= 2;
+            this.firerate *= 2;
+        }
+        this._hitPoints = this.stamina;
+        BABYLON.SceneLoader.ImportMesh("", "./models/invader-" + type + ".babylon", "", this.getScene(), (meshes) => {
             meshes.forEach((m) => {
                 m.parent = this;
                 if (m instanceof BABYLON.Mesh) {
@@ -941,9 +977,16 @@ class Invader extends BABYLON.Mesh {
     get generator() {
         return this.main.invaderGenerator;
     }
+    shoot() {
+        if (this._coolDown > 0) {
+            return;
+        }
+        new Shot(false, this.position, this.getDirection(BABYLON.Axis.Z), 20, this.power, 100, this.main);
+        this._coolDown = Math.round(60 / this.firerate);
+    }
     wound(damage) {
-        this.hp -= damage;
-        if (this.hp < 0) {
+        this._hitPoints -= damage;
+        if (this._hitPoints < 0) {
             this.kill();
         }
     }
@@ -1017,10 +1060,28 @@ class Shot {
                 }
             }
         };
+        this._invaderShotUpdate = () => {
+            let deltaTime = this.main.engine.getDeltaTime() / 1000;
+            this._instance.position.addInPlace(this.direction.scale(this.speed * deltaTime));
+            if (this.position.x < -64 ||
+                this.position.x > LetterGrid.GRID_DISTANCE + 64 ||
+                this.position.z < -64 ||
+                this.position.z > LetterGrid.GRID_DISTANCE + 64) {
+                this.dispose();
+                return;
+            }
+            if (BABYLON.Vector3.DistanceSquared(this._instance.position, this.main.spaceship.position) < 4) {
+                this.dispose();
+                return;
+            }
+        };
         this._instance = BABYLON.MeshBuilder.CreateBox("Shot", { size: 0.25 }, main.scene);
         this._instance.position.copyFrom(position);
         if (playerShot) {
             this.main.scene.onBeforeRenderObservable.add(this._playerShotUpdate);
+        }
+        else {
+            this.main.scene.onBeforeRenderObservable.add(this._invaderShotUpdate);
         }
     }
     get generator() {

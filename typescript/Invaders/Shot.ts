@@ -20,6 +20,9 @@ class Shot {
         if (playerShot) {
             this.main.scene.onBeforeRenderObservable.add(this._playerShotUpdate);
         }
+        else {
+            this.main.scene.onBeforeRenderObservable.add(this._invaderShotUpdate);
+        }
     }
 
     public dispose(): void {
@@ -46,6 +49,25 @@ class Shot {
                 this.dispose();
                 return
             }
+        }
+    }
+
+    private _invaderShotUpdate = () => {
+        let deltaTime = this.main.engine.getDeltaTime() / 1000;
+        this._instance.position.addInPlace(this.direction.scale(this.speed * deltaTime));
+        if (
+            this.position.x < -64 ||
+            this.position.x > LetterGrid.GRID_DISTANCE + 64 ||
+            this.position.z < -64 ||
+            this.position.z > LetterGrid.GRID_DISTANCE + 64
+        ) {
+            this.dispose();
+            return;
+        }
+        if (BABYLON.Vector3.DistanceSquared(this._instance.position, this.main.spaceship.position) < 4) {
+            
+            this.dispose();
+            return
         }
     }
 }

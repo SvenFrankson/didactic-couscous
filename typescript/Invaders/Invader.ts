@@ -2,9 +2,15 @@ class Invader extends BABYLON.Mesh {
 
     private _instance: BABYLON.Mesh;
 
-    public hp: number = 50;
-    public thrust: number = 1;
-    public velocity: BABYLON.Vector3 = BABYLON.Vector3.Zero();
+    private _thrust: number = 1;
+    private _velocity: BABYLON.Vector3 = BABYLON.Vector3.Zero();
+    private _hitPoints: number = 50;
+
+    // caracteristics
+    public maxThrust: number = 5;
+    public stamina: number = 50;
+    public power: number = 10;
+    public firerate: number = 0.5;
 
     public get grid(): LetterGrid {
         return this.main.grid;
@@ -17,12 +23,37 @@ class Invader extends BABYLON.Mesh {
     }
 
     constructor(
-        public main: Main
+        public main: Main,
+        type: number = -1
     ) {
         super("Invader", main.scene);
+        if (type = -1) {
+            type = Math.floor(Math.random() * 5 + 1);
+        }
+        if (type === 1) {
+            this.maxThrust *= 2;
+            this.power *= 2;
+        }
+        if (type === 2) {
+            this.stamina *= 2;
+            this.firerate *= 2;
+        }
+        if (type === 3) {
+            this.maxThrust *= 2;
+            this.firerate *= 2;
+        }
+        if (type === 4) {
+            this.stamina *= 2;
+            this.power *= 2;
+        }
+        if (type === 5) {
+            this.power *= 2;
+            this.firerate *= 2;
+        }
+        this._hitPoints = this.stamina;
         BABYLON.SceneLoader.ImportMesh(
 			"",
-			"./models/invader-" + Math.floor(Math.random() * 5 + 1) + ".babylon",
+			"./models/invader-" + type + ".babylon",
 			"",
             this.getScene(),
             (meshes) => {
@@ -43,27 +74,30 @@ class Invader extends BABYLON.Mesh {
     }
 
     private _update = () => {
+        if (this._coolDown > 0) {
+            this._coolDown--;
+        }
         let deltaTime = this.getEngine().getDeltaTime() / 1000;
         let distanceToTarget = BABYLON.Vector3.Distance(this.spaceship.position,this.position);
         if (distanceToTarget > 5) {
-            this.thrust = BABYLON.Scalar.Clamp(
+            this._thrust = BABYLON.Scalar.Clamp(
                 distanceToTarget * 0.5,
                 0,
-                10
+                this.maxThrust
             );
         }
         else {
-            this.thrust = 10;
+            this._thrust = this.maxThrust;
         }
-        this.velocity.addInPlace(
-            this.getDirection(BABYLON.Axis.Z).scale(this.thrust * deltaTime)
+        this._velocity.addInPlace(
+            this.getDirection(BABYLON.Axis.Z).scale(this._thrust * deltaTime)
         );
         let dragX = this.getDirection(BABYLON.Axis.X);
-        let dragXComp = BABYLON.Vector3.Dot(this.velocity, dragX);
+        let dragXComp = BABYLON.Vector3.Dot(this._velocity, dragX);
         dragXComp *= Math.abs(dragXComp);
         dragX.scaleInPlace(dragXComp * deltaTime * 0.8);
         let dragZ = this.getDirection(BABYLON.Axis.Z);
-        let dragZComp = BABYLON.Vector3.Dot(this.velocity, dragZ);
+        let dragZComp = BABYLON.Vector3.Dot(this._velocity, dragZ);
         if (dragZComp < 0) {
             dragZComp *= 10;
         }
@@ -84,8 +118,8 @@ class Invader extends BABYLON.Mesh {
             framer.z -= Math.abs(this.position.z - (LetterGrid.GRID_LENGTH + 1) * LetterGrid.GRID_SIZE) * 5 * deltaTime;
         }
 
-        this.velocity.subtractInPlace(dragX).subtractInPlace(dragZ).addInPlace(framer);
-        this.position.addInPlace(this.velocity.scale(deltaTime));
+        this._velocity.subtractInPlace(dragX).subtractInPlace(dragZ).addInPlace(framer);
+        this.position.addInPlace(this._velocity.scale(deltaTime));
         this.position.y = 0;
         
         let newDir = this.spaceship.position.subtract(this.position);
@@ -101,11 +135,31 @@ class Invader extends BABYLON.Mesh {
             newRotation
         );
         BABYLON.Quaternion.SlerpToRef(this.rotationQuaternion, newRotation, 0.1, this.rotationQuaternion);
+        if (BABYLON.Vector3.Dot(newDir, this.getDirection(BABYLON.Axis.Z)) > 0.9) {
+            this.shoot();
+        }
+    }
+
+    private _coolDown: number = 0;
+    public shoot(): void {
+        if (this._coolDown > 0) {
+            return;
+        }
+        new Shot(
+            false,
+            this.position,
+            this.getDirection(BABYLON.Axis.Z),
+            20,
+            this.power,
+            100,
+            this.main
+        );
+        this._coolDown = Math.round(60 / this.firerate);
     }
 
     public wound(damage: number) {
-        this.hp -= damage;
-        if (this.hp < 0) {
+        this._hitPoints -= damage;
+        if (this._hitPoints < 0) {
             this.kill();
         }
     }
