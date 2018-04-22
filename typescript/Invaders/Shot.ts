@@ -158,6 +158,7 @@ class Shot {
 
     public dispose(): void {
         this.main.scene.onBeforeRenderObservable.removeCallback(this._playerShotUpdate);
+        this.main.scene.onBeforeRenderObservable.removeCallback(this._invaderShotUpdate);
         this._instance.dispose();
     }
 
@@ -196,7 +197,7 @@ class Shot {
             return;
         }
         if (BABYLON.Vector3.DistanceSquared(this._instance.position, this.main.spaceship.position) < 4) {
-
+            this.main.spaceship.wound(this.damage);
             this.dispose();
             return
         }

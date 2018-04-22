@@ -383,6 +383,7 @@ class Spaceship extends BABYLON.Mesh {
         this.main = main;
         this.straff = 0;
         this.thrust = 0;
+        this.hitPoints = 100;
         this.velocity = BABYLON.Vector3.Zero();
         this._staminaXp = 0;
         this._shieldXp = 0;
@@ -392,6 +393,10 @@ class Spaceship extends BABYLON.Mesh {
         this.shieldLevel = 0;
         this.powerLevel = 0;
         this.firerateLevel = 0;
+        this.staminaCoef = 1;
+        this.shieldCoef = 1;
+        this.powerCoef = 1;
+        this.firerateCoef = 1;
         this._update = () => {
             if (this._coolDown > 0) {
                 this._coolDown--;
@@ -444,6 +449,7 @@ class Spaceship extends BABYLON.Mesh {
         this._staminaXp++;
         if (this._staminaXp > this.staminaLevel) {
             this.staminaLevel++;
+            this.staminaCoef = Math.pow(1.1, this.staminaLevel);
             this._staminaXp = 0;
             this._updateUI();
         }
@@ -452,6 +458,7 @@ class Spaceship extends BABYLON.Mesh {
         this._shieldXp++;
         if (this._shieldXp > this.shieldLevel) {
             this.shieldLevel++;
+            this.shieldCoef = Math.pow(1.1, this.shieldLevel);
             this._shieldXp = 0;
             this._updateUI();
         }
@@ -460,6 +467,7 @@ class Spaceship extends BABYLON.Mesh {
         this._powerXp++;
         if (this._powerXp > this.powerLevel) {
             this.powerLevel++;
+            this.powerCoef = Math.pow(1.1, this.powerLevel);
             this._powerXp = 0;
             this._updateUI();
         }
@@ -468,9 +476,22 @@ class Spaceship extends BABYLON.Mesh {
         this._firerateXp++;
         if (this._firerateXp > this.firerateLevel) {
             this.firerateLevel++;
+            this.firerateCoef = Math.pow(1.1, this.firerateLevel);
             this._firerateXp = 0;
             this._updateUI();
         }
+    }
+    get stamina() {
+        return Math.floor(100 * this.staminaCoef);
+    }
+    get shield() {
+        return 10 * this.shieldCoef;
+    }
+    get power() {
+        return 10 * this.powerCoef;
+    }
+    get firerate() {
+        return 2 * this.firerateCoef;
     }
     get grid() {
         return this.main.grid;
@@ -479,7 +500,7 @@ class Spaceship extends BABYLON.Mesh {
         return this.main.gui;
     }
     _createUI() {
-        this.scoreUI = new BABYLON.GUI.TextBlock("ScoreBlock", "SCORE : 0");
+        this.scoreUI = new BABYLON.GUI.TextBlock("ScoreBlock", "SCORE 0");
         this.scoreUI.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
         this.scoreUI.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
         this.scoreUI.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -491,7 +512,7 @@ class Spaceship extends BABYLON.Mesh {
         this.scoreUI.fontSize = "80px";
         this.scoreUI.color = "white";
         this.gui.addControl(this.scoreUI);
-        this.hpUI = new BABYLON.GUI.TextBlock("ScoreBlock", "HP : 100");
+        this.hpUI = new BABYLON.GUI.TextBlock("ScoreBlock", "HP " + this.hitPoints + " / " + this.stamina);
         this.hpUI.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
         this.hpUI.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
         this.hpUI.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
@@ -638,6 +659,7 @@ class Spaceship extends BABYLON.Mesh {
         this._updateUI();
     }
     _updateUI() {
+        this.hpUI.text = "HP " + this.hitPoints + " / " + this.stamina;
         this.staminaTextUI.text = "lvl " + this.staminaLevel;
         this.shieldTextUI.text = "lvl " + this.shieldLevel;
         this.powerTextUI.text = "lvl " + this.powerLevel;
@@ -647,8 +669,17 @@ class Spaceship extends BABYLON.Mesh {
         if (this._coolDown > 0) {
             return;
         }
-        new Shot(true, this.position, this.rotationQuaternion, 20, 30, 100, this.main);
-        this._coolDown = 5;
+        new Shot(true, this.position, this.rotationQuaternion, 20, this.power, 100, this.main);
+        this._coolDown = Math.round(60 / this.firerate);
+    }
+    wound(damage) {
+        console.log("wound");
+        let r = Math.random();
+        if (r < this.shield / 100) {
+            return;
+        }
+        this.hitPoints -= damage;
+        this._updateUI();
     }
 }
 class SpaceshipCamera extends BABYLON.FreeCamera {
@@ -1045,9 +1076,9 @@ class Invader extends BABYLON.Mesh {
         this._hitPoints = 50;
         // caracteristics
         this.maxThrust = 5;
-        this.stamina = 50;
-        this.power = 10;
-        this.firerate = 0.5;
+        this.stamina = 25;
+        this.power = 5;
+        this.firerate = 0.25;
         this._update = () => {
             if (this._coolDown > 0) {
                 this._coolDown--;
@@ -1292,6 +1323,7 @@ class Shot {
                 return;
             }
             if (BABYLON.Vector3.DistanceSquared(this._instance.position, this.main.spaceship.position) < 4) {
+                this.main.spaceship.wound(this.damage);
                 this.dispose();
                 return;
             }
@@ -1411,6 +1443,7 @@ class Shot {
     }
     dispose() {
         this.main.scene.onBeforeRenderObservable.removeCallback(this._playerShotUpdate);
+        this.main.scene.onBeforeRenderObservable.removeCallback(this._invaderShotUpdate);
         this._instance.dispose();
     }
 }

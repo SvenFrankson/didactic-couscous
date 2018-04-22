@@ -8,9 +8,9 @@ class Invader extends BABYLON.Mesh {
 
     // caracteristics
     public maxThrust: number = 5;
-    public stamina: number = 50;
-    public power: number = 10;
-    public firerate: number = 0.5;
+    public stamina: number = 25;
+    public power: number = 5;
+    public firerate: number = 0.25;
 
     public get grid(): LetterGrid {
         return this.main.grid;

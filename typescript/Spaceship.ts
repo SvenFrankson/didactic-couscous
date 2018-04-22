@@ -3,6 +3,7 @@ class Spaceship extends BABYLON.Mesh {
     private _instance: BABYLON.Mesh;
     public straff: number = 0;
     public thrust: number = 0;
+    public hitPoints: number = 100;
     public mouseInput: SpaceshipMouseInput;
     private _keyboardInput: SpaceshipKeyboardInput;
     public letterStack: LetterStack;
@@ -20,6 +21,7 @@ class Spaceship extends BABYLON.Mesh {
         this._staminaXp++;
         if (this._staminaXp > this.staminaLevel) {
             this.staminaLevel++;
+            this.staminaCoef = Math.pow(1.1, this.staminaLevel);
             this._staminaXp = 0;
             this._updateUI()
         }
@@ -29,6 +31,7 @@ class Spaceship extends BABYLON.Mesh {
         this._shieldXp++;
         if (this._shieldXp > this.shieldLevel) {
             this.shieldLevel++;
+            this.shieldCoef = Math.pow(1.1, this.shieldLevel);
             this._shieldXp = 0;
             this._updateUI()
         }
@@ -38,6 +41,7 @@ class Spaceship extends BABYLON.Mesh {
         this._powerXp++;
         if (this._powerXp > this.powerLevel) {
             this.powerLevel++;
+            this.powerCoef = Math.pow(1.1, this.powerLevel);
             this._powerXp = 0;
             this._updateUI()
         }
@@ -47,6 +51,7 @@ class Spaceship extends BABYLON.Mesh {
         this._firerateXp++;
         if (this._firerateXp > this.firerateLevel) {
             this.firerateLevel++;
+            this.firerateCoef = Math.pow(1.1, this.firerateLevel);
             this._firerateXp = 0;
             this._updateUI()
         }
@@ -56,6 +61,24 @@ class Spaceship extends BABYLON.Mesh {
     public shieldLevel: number = 0;
     public powerLevel: number = 0;
     public firerateLevel: number = 0;
+    
+    public staminaCoef: number = 1;
+    public shieldCoef: number = 1;
+    public powerCoef: number = 1;
+    public firerateCoef: number = 1;
+
+    public get stamina(): number {
+        return Math.floor(100 * this.staminaCoef);
+    }
+    public get shield(): number {
+        return 10 * this.shieldCoef;
+    }
+    public get power(): number {
+        return 10 * this.powerCoef;
+    }
+    public get firerate(): number {
+        return 2 * this.firerateCoef;
+    }
 
     public get grid(): LetterGrid {
         return this.main.grid;
@@ -89,7 +112,7 @@ class Spaceship extends BABYLON.Mesh {
 
     private _createUI(): void {
 
-        this.scoreUI = new BABYLON.GUI.TextBlock("ScoreBlock", "SCORE : 0");
+        this.scoreUI = new BABYLON.GUI.TextBlock("ScoreBlock", "SCORE 0");
         this.scoreUI.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
         this.scoreUI.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
         this.scoreUI.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -102,7 +125,7 @@ class Spaceship extends BABYLON.Mesh {
         this.scoreUI.color = "white";
         this.gui.addControl(this.scoreUI);
 
-        this.hpUI = new BABYLON.GUI.TextBlock("ScoreBlock", "HP : 100");
+        this.hpUI = new BABYLON.GUI.TextBlock("ScoreBlock", "HP " + this.hitPoints + " / " + this.stamina);
         this.hpUI.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
         this.hpUI.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
         this.hpUI.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
@@ -263,6 +286,7 @@ class Spaceship extends BABYLON.Mesh {
     }
 
     private _updateUI() {
+        this.hpUI.text = "HP " + this.hitPoints + " / " + this.stamina;
         this.staminaTextUI.text = "lvl " + this.staminaLevel;
         this.shieldTextUI.text = "lvl " + this.shieldLevel;
         this.powerTextUI.text = "lvl " + this.powerLevel;
@@ -321,10 +345,20 @@ class Spaceship extends BABYLON.Mesh {
             this.position,
             this.rotationQuaternion,
             20,
-            30,
+            this.power,
             100,
             this.main
         );
-        this._coolDown = 5;
+        this._coolDown = Math.round(60 / this.firerate);
+    }
+
+    public wound(damage: number): void {
+        console.log("wound");
+        let r = Math.random();
+        if (r < this.shield / 100) {
+            return;
+        }
+        this.hitPoints -= damage;
+        this._updateUI();
     }
 }
