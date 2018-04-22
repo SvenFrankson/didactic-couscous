@@ -7,9 +7,14 @@ class Spaceship extends BABYLON.Mesh {
     public letterStack: LetterStack;
 
     public velocity: BABYLON.Vector3 = BABYLON.Vector3.Zero();
+    public scoreUI: BABYLON.GUI.TextBlock;
+    public hpUI: BABYLON.GUI.TextBlock;
 
     public get grid(): LetterGrid {
         return this.main.grid;
+    }
+    public get gui(): BABYLON.GUI.AdvancedDynamicTexture {
+        return this.main.gui;
     }
 
     constructor(
@@ -32,6 +37,36 @@ class Spaceship extends BABYLON.Mesh {
         this._keyboardInput = new SpaceshipKeyboardInput(this);
         this.getScene().onBeforeRenderObservable.add(this._update);
         this.letterStack = new LetterStack(this.main);
+        this._createUI();
+    }
+
+    private _createUI(): void {
+
+            this.scoreUI = new BABYLON.GUI.TextBlock("ScoreBlock", "SCORE : 0");
+            this.scoreUI.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            this.scoreUI.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            this.scoreUI.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            this.scoreUI.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+            this.scoreUI.left = "40 px";
+            this.scoreUI.top = "-40 px";
+            this.scoreUI.width = "500px";
+            this.scoreUI.height = "100px";
+            this.scoreUI.fontSize = "80px";
+            this.scoreUI.color = "white";
+            this.gui.addControl(this.scoreUI);
+
+            this.hpUI = new BABYLON.GUI.TextBlock("ScoreBlock", "HP : 100");
+            this.hpUI.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            this.hpUI.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            this.hpUI.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            this.hpUI.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+            this.hpUI.left = "-40 px";
+            this.hpUI.top = "-40 px";
+            this.hpUI.width = "500px";
+            this.hpUI.height = "100px";
+            this.hpUI.fontSize = "80px";
+            this.hpUI.color = "white";
+            this.gui.addControl(this.hpUI);
     }
 
     private _update = () => {

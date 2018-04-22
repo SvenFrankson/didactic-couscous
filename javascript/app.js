@@ -227,24 +227,39 @@ class LetterStack {
         return this.main.gui;
     }
     _createUI() {
-        console.log("!");
         this._letterUISlots = [];
         for (let i = 0; i < LetterStack.MAX_LENGTH; i++) {
+            let textIcon = new BABYLON.GUI.Image("TextIcon-" + i, "textures/letter_icon.png");
+            textIcon.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            textIcon.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            textIcon.left = (20 + (100 + 10) * i) + " px";
+            textIcon.top = "20 px";
+            textIcon.width = "100px";
+            textIcon.height = "100px";
+            this.gui.addControl(textIcon);
             let text = new BABYLON.GUI.TextBlock("TextBlock-" + i, "_");
-            text.left = (0 + (100 + 10) * i - 600) + " px";
-            text.top = "-500 px";
-            text.width = "100 px";
-            text.height = "50 px";
-            text.fontSize = "30px";
-            text.color = "white";
+            text.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            text.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            text.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            text.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+            text.left = (20 + (100 + 10) * i) + " px";
+            text.top = "20 px";
+            text.width = "100px";
+            text.height = "100px";
+            text.fontSize = "50px";
+            text.color = "black";
             this._letterUISlots[i] = text;
             this.gui.addControl(text);
             let index = new BABYLON.GUI.TextBlock("IndexBlock-" + i, "(" + (i + 1) + ")");
-            index.left = (0 + (100 + 10) * i - 600) + " px";
-            index.top = "-470 px";
-            index.width = "100 px";
-            index.height = "20 px";
-            index.fontSize = "15px";
+            index.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            index.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            index.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            index.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            index.left = (20 + (100 + 10) * i) + " px";
+            index.top = "130 px";
+            index.width = "100px";
+            index.height = "100px";
+            index.fontSize = "20px";
             index.color = "white";
             this.gui.addControl(index);
         }
@@ -385,9 +400,39 @@ class Spaceship extends BABYLON.Mesh {
         this._keyboardInput = new SpaceshipKeyboardInput(this);
         this.getScene().onBeforeRenderObservable.add(this._update);
         this.letterStack = new LetterStack(this.main);
+        this._createUI();
     }
     get grid() {
         return this.main.grid;
+    }
+    get gui() {
+        return this.main.gui;
+    }
+    _createUI() {
+        this.scoreUI = new BABYLON.GUI.TextBlock("ScoreBlock", "SCORE : 0");
+        this.scoreUI.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+        this.scoreUI.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+        this.scoreUI.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+        this.scoreUI.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+        this.scoreUI.left = "40 px";
+        this.scoreUI.top = "-40 px";
+        this.scoreUI.width = "500px";
+        this.scoreUI.height = "100px";
+        this.scoreUI.fontSize = "80px";
+        this.scoreUI.color = "white";
+        this.gui.addControl(this.scoreUI);
+        this.hpUI = new BABYLON.GUI.TextBlock("ScoreBlock", "HP : 100");
+        this.hpUI.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+        this.hpUI.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+        this.hpUI.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+        this.hpUI.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+        this.hpUI.left = "-40 px";
+        this.hpUI.top = "-40 px";
+        this.hpUI.width = "500px";
+        this.hpUI.height = "100px";
+        this.hpUI.fontSize = "80px";
+        this.hpUI.color = "white";
+        this.gui.addControl(this.hpUI);
     }
     shot() {
         if (this._coolDown > 0) {

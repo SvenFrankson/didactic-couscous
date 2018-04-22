@@ -21,25 +21,41 @@ class LetterStack {
 
     private _letterUISlots: BABYLON.GUI.TextBlock[];
     private _createUI(): void {
-        console.log("!");
         this._letterUISlots = [];
         for (let i = 0; i < LetterStack.MAX_LENGTH; i++) {
+            let textIcon = new BABYLON.GUI.Image("TextIcon-" + i, "textures/letter_icon.png");
+            textIcon.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            textIcon.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            textIcon.left = (20 + (100 + 10) * i) + " px";
+            textIcon.top = "20 px";
+            textIcon.width = "100px";
+            textIcon.height = "100px";
+            this.gui.addControl(textIcon);
+
             let text = new BABYLON.GUI.TextBlock("TextBlock-" + i, "_");
-            text.left = (0 + (100 + 10) * i - 600) + " px";
-            text.top = "-500 px";
-            text.width = "100 px";
-            text.height = "50 px";
-            text.fontSize = "30px";
-            text.color = "white";
+            text.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            text.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            text.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            text.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+            text.left = (20 + (100 + 10) * i) + " px";
+            text.top = "20 px";
+            text.width = "100px";
+            text.height = "100px";
+            text.fontSize = "50px";
+            text.color = "black";
             this._letterUISlots[i] = text;
             this.gui.addControl(text);
 
             let index = new BABYLON.GUI.TextBlock("IndexBlock-" + i, "(" + (i + 1) + ")");
-            index.left = (0 + (100 + 10) * i - 600) + " px";
-            index.top = "-470 px";
-            index.width = "100 px";
-            index.height = "20 px";
-            index.fontSize = "15px";
+            index.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            index.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            index.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            index.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            index.left = (20 + (100 + 10) * i) + " px";
+            index.top = "130 px";
+            index.width = "100px";
+            index.height = "100px";
+            index.fontSize = "20px";
             index.color = "white";
             this.gui.addControl(index);
         }
