@@ -209,6 +209,9 @@ class LetterGrid {
 
     private _validatePendingCells(): void {
         // Check for pendingCells alignment.
+        if (this.pendingCells.length === 1) {
+            return this._rejectPendingCells();
+        }
         let deltaI: number = 0;
         let deltaJ: number = 0;
         for (let i = 0; i < this.pendingCells.length; i++) {

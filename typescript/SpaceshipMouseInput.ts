@@ -1,6 +1,8 @@
 class SpaceshipMouseInput {
 
+    public currentDragNDropIndex: number = -1;
     public mouseDown: boolean = false;
+    public lockInput: boolean = false;
     public get scene(): BABYLON.Scene {
         return this.spaceship.main.scene;
     }
@@ -19,12 +21,26 @@ class SpaceshipMouseInput {
                 }
                 if (eventData.type === BABYLON.PointerEventTypes._POINTERUP) {
                     this.mouseDown = false;
+                    if (this.currentDragNDropIndex !== -1) {
+                        let pick = this.scene.pick(this.scene.pointerX, this.scene.pointerY, (m) => { return m === this.ground; });
+                        if (pick && pick.hit) {
+                            let letter = this.spaceship.letterStack.removeAt(this.currentDragNDropIndex);
+                            if (letter !== "") {
+                                this.spaceship.grid.add(letter, pick.pickedPoint);
+                            }
+                        }
+                        this.currentDragNDropIndex = -1;
+                    }
                 }
             }
         )
     }
 
     private _checkInput = () => {
+        if (this.lockInput ||this.currentDragNDropIndex > -1) {
+            this.spaceship.thrust = 0;
+            return;
+        }
         if (this.mouseDown) {
             this.spaceship.shoot();
         }

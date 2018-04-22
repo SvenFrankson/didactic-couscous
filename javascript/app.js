@@ -152,6 +152,9 @@ class LetterGrid {
     }
     _validatePendingCells() {
         // Check for pendingCells alignment.
+        if (this.pendingCells.length === 1) {
+            return this._rejectPendingCells();
+        }
         let deltaI = 0;
         let deltaJ = 0;
         for (let i = 0; i < this.pendingCells.length; i++) {
@@ -219,13 +222,13 @@ class LetterStack {
         this.letters = [];
         this._createUI();
         // debug fill
-        this.add("T");
-        this.add("E");
-        this.add("S");
-        this.add("T");
-        this.add("O");
-        this.add("S");
-        this.add("T");
+        this.add(WordValidator.randomLetter());
+        this.add(WordValidator.randomLetter());
+        this.add(WordValidator.randomLetter());
+        this.add(WordValidator.randomLetter());
+        this.add(WordValidator.randomLetter());
+        this.add(WordValidator.randomLetter());
+        this.add(WordValidator.randomLetter());
     }
     get gui() {
         return this.main.gui;
@@ -236,36 +239,46 @@ class LetterStack {
             let textIcon = new BABYLON.GUI.Image("TextIcon-" + i, "textures/letter_icon.png");
             textIcon.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
             textIcon.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            textIcon.left = (20 + (100 + 10) * i) + " px";
+            textIcon.left = (20 + (150 + 10) * i) + " px";
             textIcon.top = "20 px";
-            textIcon.width = "100px";
-            textIcon.height = "100px";
+            textIcon.width = "150px";
+            textIcon.height = "150px";
             this.gui.addControl(textIcon);
             let text = new BABYLON.GUI.TextBlock("TextBlock-" + i, "_");
             text.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
             text.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             text.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
             text.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
-            text.left = (20 + (100 + 10) * i) + " px";
+            text.left = (20 + (150 + 10) * i) + " px";
             text.top = "20 px";
-            text.width = "100px";
-            text.height = "100px";
-            text.fontSize = "50px";
+            text.width = "150px";
+            text.height = "150px";
+            text.fontSize = "80px";
             text.color = "black";
             this._letterUISlots[i] = text;
             this.gui.addControl(text);
-            let index = new BABYLON.GUI.TextBlock("IndexBlock-" + i, "(" + (i + 1) + ")");
-            index.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            index.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            index.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-            index.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            index.left = (20 + (100 + 10) * i) + " px";
-            index.top = "130 px";
-            index.width = "100px";
-            index.height = "100px";
-            index.fontSize = "20px";
-            index.color = "white";
-            this.gui.addControl(index);
+            let index = i;
+            text.onPointerEnterObservable.add(() => {
+                this.main.spaceship.mouseInput.lockInput = true;
+            });
+            text.onPointerOutObservable.add(() => {
+                this.main.spaceship.mouseInput.lockInput = false;
+            });
+            text.onPointerDownObservable.add(() => {
+                this.main.spaceship.mouseInput.currentDragNDropIndex = index;
+            });
+            let indexBlock = new BABYLON.GUI.TextBlock("indexBlock-" + i, "(" + (i + 1) + ")");
+            indexBlock.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            indexBlock.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            indexBlock.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            indexBlock.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            indexBlock.left = (20 + (150 + 10) * i) + " px";
+            indexBlock.top = "190 px";
+            indexBlock.width = "150px";
+            indexBlock.height = "150px";
+            indexBlock.fontSize = "30px";
+            indexBlock.color = "white";
+            this.gui.addControl(indexBlock);
         }
     }
     _updateUI() {
@@ -404,7 +417,7 @@ class Spaceship extends BABYLON.Mesh {
             }
         });
         this.rotationQuaternion = BABYLON.Quaternion.Identity();
-        this._mouseInput = new SpaceshipMouseInput(this);
+        this.mouseInput = new SpaceshipMouseInput(this);
         this._keyboardInput = new SpaceshipKeyboardInput(this);
         this.getScene().onBeforeRenderObservable.add(this._update);
         this.letterStack = new LetterStack(this.main);
@@ -632,8 +645,14 @@ class SpaceshipKeyboardInput {
 class SpaceshipMouseInput {
     constructor(spaceship) {
         this.spaceship = spaceship;
+        this.currentDragNDropIndex = -1;
         this.mouseDown = false;
+        this.lockInput = false;
         this._checkInput = () => {
+            if (this.lockInput || this.currentDragNDropIndex > -1) {
+                this.spaceship.thrust = 0;
+                return;
+            }
             if (this.mouseDown) {
                 this.spaceship.shoot();
             }
@@ -652,6 +671,16 @@ class SpaceshipMouseInput {
             }
             if (eventData.type === BABYLON.PointerEventTypes._POINTERUP) {
                 this.mouseDown = false;
+                if (this.currentDragNDropIndex !== -1) {
+                    let pick = this.scene.pick(this.scene.pointerX, this.scene.pointerY, (m) => { return m === this.ground; });
+                    if (pick && pick.hit) {
+                        let letter = this.spaceship.letterStack.removeAt(this.currentDragNDropIndex);
+                        if (letter !== "") {
+                            this.spaceship.grid.add(letter, pick.pickedPoint);
+                        }
+                    }
+                    this.currentDragNDropIndex = -1;
+                }
             }
         });
     }

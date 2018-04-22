@@ -2,7 +2,7 @@ class Spaceship extends BABYLON.Mesh {
 
     private _instance: BABYLON.Mesh;
     public thrust: number = 1;
-    private _mouseInput: SpaceshipMouseInput;
+    public mouseInput: SpaceshipMouseInput;
     private _keyboardInput: SpaceshipKeyboardInput;
     public letterStack: LetterStack;
 
@@ -37,7 +37,7 @@ class Spaceship extends BABYLON.Mesh {
             }
         );
         this.rotationQuaternion = BABYLON.Quaternion.Identity();
-        this._mouseInput = new SpaceshipMouseInput(this);
+        this.mouseInput = new SpaceshipMouseInput(this);
         this._keyboardInput = new SpaceshipKeyboardInput(this);
         this.getScene().onBeforeRenderObservable.add(this._update);
         this.letterStack = new LetterStack(this.main);
