@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="512"
+   height="256"
+   viewBox="0 0 135.46666 67.733335"
+   version="1.1"
+   id="svg4512"
+   inkscape:version="0.92.0 r15299"
+   sodipodi:docname="firerate_icon.svg"
+   inkscape:export-filename="C:\Users\Sven\Documents\SvenFrankson\didactic-couscous\textures\firerate_icon.png"
+   inkscape:export-xdpi="48"
+   inkscape:export-ydpi="48">
+  <defs
+     id="defs4506">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 33.866667 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="135.46666 : 33.866667 : 1"
+       inkscape:persp3d-origin="67.73333 : 22.577778 : 1"
+       id="perspective5059" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.979899"
+     inkscape:cx="221.79047"
+     inkscape:cy="101.59554"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     units="px"
+     inkscape:pagecheckerboard="true"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata4509">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-229.26665)">
+    <path
+       style="fill:#fffcfd;fill-opacity:1;stroke:none;stroke-width:0.52916664;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 16.075617,242.14954 a 4.2094952,4.2094952 0 0 0 -5.934417,-0.46814 4.2094952,4.2094952 0 0 0 -0.468865,5.93436 4.2094952,4.2094952 0 0 0 5.934755,0.46853 4.2094952,4.2094952 0 0 0 0.468527,-5.93475 z m 11.583018,13.56865 a 4.2094952,4.2094952 0 0 0 -5.934417,-0.46814 4.2094952,4.2094952 0 0 0 -0.468864,5.93437 4.2094952,4.2094952 0 0 0 5.934754,0.46852 4.2094952,4.2094952 0 0 0 0.468527,-5.93475 z m 8.502982,9.96062 a 4.2094952,4.2094952 0 0 0 -5.934754,-0.46853 4.2094952,4.2094952 0 0 0 -0.468528,5.93475 4.2094952,4.2094952 0 0 0 5.934756,0.46853 4.2094952,4.2094952 0 0 0 0.468526,-5.93475 z m 7.028053,8.23284 a 4.2094952,4.2094952 0 0 0 -5.934755,-0.46853 4.2094952,4.2094952 0 0 0 -0.468526,5.93475 4.2094952,4.2094952 0 0 0 4.646038,1.21535 4.2094952,4.2094952 0 0 0 0.472929,4.78114 4.2094952,4.2094952 0 0 0 5.934753,0.46854 4.2094952,4.2094952 0 0 0 0.468529,-5.93476 4.2094952,4.2094952 0 0 0 -4.646038,-1.21533 4.2094952,4.2094952 0 0 0 -0.47293,-4.78116 z"
+       id="path5250-5"
+       inkscape:connector-curvature="0" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:17.63835144px;line-height:11.02396965px;font-family:'Komika Axis';-inkscape-font-specification:'Komika Axis';letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.4409588;stroke-opacity:1"
+       x="44.105465"
+       y="249.5701"
+       id="text5104"><tspan
+         sodipodi:role="line"
+         id="tspan5102"
+         x="44.105465"
+         y="249.5701"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Komika Axis';-inkscape-font-specification:'Komika Axis';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.4409588;stroke-opacity:1">FIRERATE</tspan></text>
+    <path
+       style="fill:#ff8b54;fill-opacity:1;stroke:none;stroke-width:1.99999988;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 39.658203 50.304688 A 15.909903 15.909903 0 0 0 29.900391 54.105469 A 15.909903 15.909903 0 0 0 28.126953 76.533203 A 15.909903 15.909903 0 0 0 50.558594 78.304688 A 15.909903 15.909903 0 0 0 52.330078 55.873047 A 15.909903 15.909903 0 0 0 39.658203 50.304688 z M 12.679688 72.150391 L 8.0722656 76.089844 L 151.4707 243.87891 L 156.07812 239.94141 L 12.679688 72.150391 z M 83.4375 101.58789 A 15.909903 15.909903 0 0 0 73.677734 105.38672 A 15.909903 15.909903 0 0 0 71.90625 127.81641 A 15.909903 15.909903 0 0 0 94.335938 129.58789 A 15.909903 15.909903 0 0 0 96.107422 107.15625 A 15.909903 15.909903 0 0 0 83.4375 101.58789 z M 115.57422 139.23242 A 15.909903 15.909903 0 0 0 105.81445 143.0332 A 15.909903 15.909903 0 0 0 104.04297 165.46289 A 15.909903 15.909903 0 0 0 126.47461 167.23438 A 15.909903 15.909903 0 0 0 128.24414 144.80273 A 15.909903 15.909903 0 0 0 115.57422 139.23242 z M 142.13672 170.34961 A 15.909903 15.909903 0 0 0 132.37695 174.14844 A 15.909903 15.909903 0 0 0 130.60547 196.58008 A 15.909903 15.909903 0 0 0 148.16602 201.17188 A 15.909903 15.909903 0 0 0 149.95312 219.24414 A 15.909903 15.909903 0 0 0 172.38477 221.01367 A 15.909903 15.909903 0 0 0 174.1543 198.58398 A 15.909903 15.909903 0 0 0 156.5957 193.99023 A 15.909903 15.909903 0 0 0 154.80664 175.91992 A 15.909903 15.909903 0 0 0 142.13672 170.34961 z "
+       transform="matrix(0.26458333,0,0,0.26458333,0,229.26665)"
+       id="path5250" />
+  </g>
+</svg>

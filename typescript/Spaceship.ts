@@ -9,6 +9,10 @@ class Spaceship extends BABYLON.Mesh {
     public velocity: BABYLON.Vector3 = BABYLON.Vector3.Zero();
     public scoreUI: BABYLON.GUI.TextBlock;
     public hpUI: BABYLON.GUI.TextBlock;
+    public staminaTextUI: BABYLON.GUI.TextBlock;
+    public shieldTextUI: BABYLON.GUI.TextBlock;
+    public powerTextUI: BABYLON.GUI.TextBlock;
+    public firerateTextUI: BABYLON.GUI.TextBlock;
 
     public get grid(): LetterGrid {
         return this.main.grid;
@@ -67,6 +71,42 @@ class Spaceship extends BABYLON.Mesh {
             this.hpUI.fontSize = "80px";
             this.hpUI.color = "white";
             this.gui.addControl(this.hpUI);
+            
+            let staminaIcon = new BABYLON.GUI.Image("StaminaIcon", "textures/stamina_icon.png");
+            staminaIcon.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            staminaIcon.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+            staminaIcon.left = "-20 px";
+            staminaIcon.top = (-128 - 64) + " px";
+            staminaIcon.width = "256px";
+            staminaIcon.height = "128px";
+            this.gui.addControl(staminaIcon);
+            
+            let shieldIcon = new BABYLON.GUI.Image("ShieldIcon", "textures/shield_icon.png");
+            shieldIcon.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            shieldIcon.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+            shieldIcon.left = "-20 px";
+            shieldIcon.top = (- 64) + " px";
+            shieldIcon.width = "256px";
+            shieldIcon.height = "128px";
+            this.gui.addControl(shieldIcon);
+            
+            let powerIcon = new BABYLON.GUI.Image("PowerIcon", "textures/power_icon.png");
+            powerIcon.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            powerIcon.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+            powerIcon.left = "-20 px";
+            powerIcon.top = (64) + " px";
+            powerIcon.width = "256px";
+            powerIcon.height = "128px";
+            this.gui.addControl(powerIcon);
+            
+            let firerateIcon = new BABYLON.GUI.Image("firerateIcon", "textures/firerate_icon.png");
+            firerateIcon.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            firerateIcon.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+            firerateIcon.left = "-20 px";
+            firerateIcon.top = (64 + 128) + " px";
+            firerateIcon.width = "256px";
+            firerateIcon.height = "128px";
+            this.gui.addControl(firerateIcon);
     }
 
     private _update = () => {

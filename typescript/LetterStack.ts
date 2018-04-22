@@ -73,17 +73,20 @@ class LetterStack {
     }
 
     public add(l: string) {
-        if (this.letters.length < LetterStack.MAX_LENGTH) {
-            this.letters.push(l);
+        for (let i = 0;  i< LetterStack.MAX_LENGTH; i++) {
+            if (!this.letters[i]) {
+                this.letters[i] = l;
+                this._updateUI();
+                return;
+            }
         }
-        this._updateUI();
     }
 
     public removeAt(n: number) {
         let l = "";
         if (this.letters[n]) {
             l = this.letters[n];
-            this.letters.splice(n, 1);
+            this.letters[n] = "";
         }
         this._updateUI();
         return l;

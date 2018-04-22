@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="512"
+   height="256"
+   viewBox="0 0 135.46666 67.733335"
+   version="1.1"
+   id="svg4512"
+   inkscape:version="0.92.0 r15299"
+   sodipodi:docname="shield_icon.svg"
+   inkscape:export-filename="C:\Users\Sven\Documents\SvenFrankson\didactic-couscous\textures\stamina_icon.png"
+   inkscape:export-xdpi="48"
+   inkscape:export-ydpi="48">
+  <defs
+     id="defs4506">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 33.866667 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="135.46666 : 33.866667 : 1"
+       inkscape:persp3d-origin="67.73333 : 22.577778 : 1"
+       id="perspective5059" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.979899"
+     inkscape:cx="221.79047"
+     inkscape:cy="89.779145"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     units="px"
+     inkscape:pagecheckerboard="true"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata4509">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-229.26665)">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:17.63835144px;line-height:11.02396965px;font-family:'Komika Axis';-inkscape-font-specification:'Komika Axis';letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.4409588;stroke-opacity:1"
+       x="60.542542"
+       y="249.5701"
+       id="text5104"><tspan
+         sodipodi:role="line"
+         id="tspan5102"
+         x="60.542542"
+         y="249.5701"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Komika Axis';-inkscape-font-specification:'Komika Axis';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.4409588;stroke-opacity:1">SHIELD</tspan></text>
+    <ellipse
+       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.46128055;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path5162-8"
+       cx="29.800554"
+       cy="260.85669"
+       rx="20.112032"
+       ry="19.777943" />
+    <ellipse
+       style="fill:#65bcff;fill-opacity:1;stroke:none;stroke-width:0.47053793;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path5162"
+       cx="27.461943"
+       cy="264.33121"
+       rx="20.112032"
+       ry="20.579752" />
+    <path
+       style="fill:#6584ff;fill-opacity:1;stroke:none;stroke-width:0.52916664;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 26.97458,243.36048 A 20.913839,20.913839 0 0 0 6.0611286,264.27393 20.913839,20.913839 0 0 0 26.97458,285.1879 20.913839,20.913839 0 0 0 47.888548,264.27393 20.913839,20.913839 0 0 0 26.97458,243.36048 Z m 0.06718,2.97139 A 18.142568,18.142568 0 0 1 45.184321,264.47443 18.142568,18.142568 0 0 1 27.04176,282.617 18.142568,18.142568 0 0 1 8.8991984,264.47443 18.142568,18.142568 0 0 1 27.04176,246.33187 Z m 0.133324,5.81308 A 12.863958,12.863958 0 0 0 14.311271,265.00928 12.863958,12.863958 0 0 0 27.175084,277.8731 12.863958,12.863958 0 0 0 40.038898,265.00928 12.863958,12.863958 0 0 0 27.175084,252.14495 Z m 0.40101,2.37557 A 10.488584,10.488584 0 0 1 38.06486,265.00928 10.488584,10.488584 0 0 1 27.576094,275.49753 10.488584,10.488584 0 0 1 17.087329,265.00928 10.488584,10.488584 0 0 1 27.576094,254.52052 Z"
+       id="path5112"
+       inkscape:connector-curvature="0" />
+  </g>
+</svg>
