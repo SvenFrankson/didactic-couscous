@@ -9,8 +9,9 @@ class LetterCell extends BABYLON.Mesh {
             width: LetterGrid.GRID_SIZE * 0.9,
             height: LetterGrid.GRID_SIZE * 0.9
         }, this.getScene());
-        this._instance.position.x = (i + 0.5) * LetterGrid.GRID_SIZE;
-        this._instance.position.z = (j + 0.5) * LetterGrid.GRID_SIZE;
+        this._instance.parent = this;
+        this.position.x = (i + 0.5) * LetterGrid.GRID_SIZE;
+        this.position.z = (j + 0.5) * LetterGrid.GRID_SIZE;
         let texture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(this._instance);
         this._textBlock = new BABYLON.GUI.TextBlock("l", this.letter);
         this._textBlock.fontSize = 1000;
@@ -192,6 +193,9 @@ class LetterGrid {
         console.log("Accept pending cells");
         this.pendingCells.forEach((c) => {
             c.setCorrectState();
+            if (Math.random() > 0) {
+                this.main.bonusGenerator.popBonus(c.position);
+            }
         });
         this.pendingCells = [];
     }
@@ -641,7 +645,7 @@ class WordValidator {
 }
 WordValidator.MAX_WORD_LENGTH = 6;
 WordValidator.letters = "EEEEEEEEEEEEAAAAAAAAAIIIIIIIIIOOOOOOOONNNNNNRRRRRRTTTTTTLLLLSSSSUUUUDDDDGGGBBCCMMPPFFHHVVWWYYKJXQZ";
-class Bonus extends BABYLON.TransformNode {
+class Bonus extends BABYLON.Mesh {
     constructor(name, main) {
         super(name, main.scene);
         this.main = main;
@@ -653,7 +657,7 @@ class BonusGenerator {
     constructor(main) {
         this.main = main;
         this.playerRange = 100;
-        this.letterRate = 5000;
+        this.letterRate = 30000;
         this._checkIntersection = () => {
             for (let i = 0; i < this.bonuses.length; i++) {
                 let b = this.bonuses[i];
@@ -674,26 +678,88 @@ class BonusGenerator {
         return this.main.spaceship;
     }
     start() {
-        this._popLetter();
+        this._popLetterLoop();
     }
-    _popLetter() {
+    popLetter(pos) {
         let letter = new Letter(this.main);
         this.bonuses.push(letter);
-        let minX = Math.max(0, this.spaceship.position.x - this.playerRange);
-        let maxX = Math.min(LetterGrid.GRID_DISTANCE, this.spaceship.position.x + this.playerRange);
-        let minZ = Math.max(0, this.spaceship.position.x - this.playerRange);
-        let maxZ = Math.min(LetterGrid.GRID_DISTANCE, this.spaceship.position.z + this.playerRange);
-        letter.position.x = Math.random() * (maxX - minX) + minX;
-        letter.position.z = Math.random() * (maxZ - minZ) + minZ;
+        if (pos) {
+            letter.position.copyFrom(pos);
+        }
+        else {
+            let minX = Math.max(0, this.spaceship.position.x - this.playerRange);
+            let maxX = Math.min(LetterGrid.GRID_DISTANCE, this.spaceship.position.x + this.playerRange);
+            let minZ = Math.max(0, this.spaceship.position.x - this.playerRange);
+            let maxZ = Math.min(LetterGrid.GRID_DISTANCE, this.spaceship.position.z + this.playerRange);
+            letter.position.x = Math.random() * (maxX - minX) + minX;
+            letter.position.z = Math.random() * (maxZ - minZ) + minZ;
+        }
+    }
+    popBonus(pos) {
+        let bonus;
+        let r = Math.random();
+        if (r > 0.75) {
+            bonus = new StaminaBonus(this.main);
+        }
+        else if (r > 0.5) {
+            bonus = new ShieldBonus(this.main);
+        }
+        else if (r > 0.25) {
+            bonus = new PowerBonus(this.main);
+        }
+        else {
+            bonus = new FirerateBonus(this.main);
+        }
+        this.bonuses.push(bonus);
+        if (pos) {
+            bonus.position.copyFrom(pos);
+        }
+        else {
+            let minX = Math.max(0, this.spaceship.position.x - this.playerRange);
+            let maxX = Math.min(LetterGrid.GRID_DISTANCE, this.spaceship.position.x + this.playerRange);
+            let minZ = Math.max(0, this.spaceship.position.x - this.playerRange);
+            let maxZ = Math.min(LetterGrid.GRID_DISTANCE, this.spaceship.position.z + this.playerRange);
+            bonus.position.x = Math.random() * (maxX - minX) + minX;
+            bonus.position.z = Math.random() * (maxZ - minZ) + minZ;
+        }
+    }
+    _popLetterLoop() {
+        this.popLetter();
         setTimeout(() => {
-            this._popLetter();
+            this._popLetterLoop();
         }, Math.random() * this.letterRate * 1.5);
+    }
+}
+class FirerateBonus extends Bonus {
+    constructor(main) {
+        super("Letter", main);
+        this._update = () => {
+            if (this.isDisposed()) {
+                return;
+            }
+            this.rotation.y += (Math.sin(this.rotation.y) * 0.03 + 0.06);
+        };
+        BABYLON.SceneLoader.ImportMesh("", "./models/firerate_bonus.babylon", "", this.getScene(), (meshes) => {
+            if (meshes[0]) {
+                meshes[0].parent = this;
+            }
+        });
+        this.position.y = 1;
+        this.rotation.x = Math.PI / 4;
+        this.getScene().onBeforeRenderObservable.add(this._update);
+    }
+    catch() {
+        this.getScene().onBeforeRenderObservable.removeCallback(this._update);
+        this.dispose();
     }
 }
 class Letter extends Bonus {
     constructor(main) {
         super("Letter", main);
         this._update = () => {
+            if (this.isDisposed()) {
+                return;
+            }
             this.rotation.y += (Math.sin(this.rotation.y) * 0.03 + 0.06);
         };
         BABYLON.SceneLoader.ImportMesh("", "./models/letter_bonus.babylon", "", this.getScene(), (meshes) => {
@@ -719,6 +785,75 @@ class Letter extends Bonus {
     }
     catch() {
         this.main.spaceship.letterStack.add(WordValidator.randomLetter());
+        this.getScene().onBeforeRenderObservable.removeCallback(this._update);
+        this.dispose();
+    }
+}
+class PowerBonus extends Bonus {
+    constructor(main) {
+        super("Letter", main);
+        this._update = () => {
+            if (this.isDisposed()) {
+                return;
+            }
+            this.rotation.y += (Math.sin(this.rotation.y) * 0.03 + 0.06);
+        };
+        BABYLON.SceneLoader.ImportMesh("", "./models/power_bonus.babylon", "", this.getScene(), (meshes) => {
+            if (meshes[0]) {
+                meshes[0].parent = this;
+            }
+        });
+        this.position.y = 1;
+        this.rotation.x = Math.PI / 4;
+        this.getScene().onBeforeRenderObservable.add(this._update);
+    }
+    catch() {
+        this.getScene().onBeforeRenderObservable.removeCallback(this._update);
+        this.dispose();
+    }
+}
+class ShieldBonus extends Bonus {
+    constructor(main) {
+        super("Letter", main);
+        this._update = () => {
+            if (this.isDisposed()) {
+                return;
+            }
+            this.rotation.y += (Math.sin(this.rotation.y) * 0.03 + 0.06);
+        };
+        BABYLON.SceneLoader.ImportMesh("", "./models/shield_bonus.babylon", "", this.getScene(), (meshes) => {
+            if (meshes[0]) {
+                meshes[0].parent = this;
+            }
+        });
+        this.position.y = 1;
+        this.rotation.x = Math.PI / 4;
+        this.getScene().onBeforeRenderObservable.add(this._update);
+    }
+    catch() {
+        this.getScene().onBeforeRenderObservable.removeCallback(this._update);
+        this.dispose();
+    }
+}
+class StaminaBonus extends Bonus {
+    constructor(main) {
+        super("Letter", main);
+        this._update = () => {
+            if (this.isDisposed()) {
+                return;
+            }
+            this.rotation.y += (Math.sin(this.rotation.y) * 0.03 + 0.06);
+        };
+        BABYLON.SceneLoader.ImportMesh("", "./models/stamina_bonus.babylon", "", this.getScene(), (meshes) => {
+            if (meshes[0]) {
+                meshes[0].parent = this;
+            }
+        });
+        this.position.y = 1;
+        this.rotation.x = Math.PI / 4;
+        this.getScene().onBeforeRenderObservable.add(this._update);
+    }
+    catch() {
         this.getScene().onBeforeRenderObservable.removeCallback(this._update);
         this.dispose();
     }
@@ -788,6 +923,9 @@ class Invader extends BABYLON.Mesh {
         let index = this.generator.invaders.indexOf(this);
         if (index !== -1) {
             this.generator.invaders.splice(index, 1);
+        }
+        if (Math.random() > 0.5) {
+            this.main.bonusGenerator.popLetter(this.position);
         }
         this.dispose();
     }

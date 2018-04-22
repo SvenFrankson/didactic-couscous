@@ -33,6 +33,9 @@ class Letter extends Bonus {
     }
 
     private _update = () => {
+        if (this.isDisposed()) {
+            return;
+        }
         this.rotation.y += (Math.sin(this.rotation.y) * 0.03 + 0.06)
     }
 

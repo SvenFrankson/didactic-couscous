@@ -18,8 +18,9 @@ class LetterCell extends BABYLON.Mesh{
             },
             this.getScene()
         );
-        this._instance.position.x = (i + 0.5) * LetterGrid.GRID_SIZE;
-        this._instance.position.z = (j + 0.5) * LetterGrid.GRID_SIZE;
+        this._instance.parent = this;
+        this.position.x = (i + 0.5) * LetterGrid.GRID_SIZE;
+        this.position.z = (j + 0.5) * LetterGrid.GRID_SIZE;
         let texture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(this._instance);
         this._textBlock = new BABYLON.GUI.TextBlock("l", this.letter);
         this._textBlock.fontSize = 1000;
@@ -256,6 +257,9 @@ class LetterGrid {
         this.pendingCells.forEach(
             (c) => {
                 c.setCorrectState();
+                if (Math.random() > 0) {
+                    this.main.bonusGenerator.popBonus(c.position);
+                }
             }
         )
         this.pendingCells = [];

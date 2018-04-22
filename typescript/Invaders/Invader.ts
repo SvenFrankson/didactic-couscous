@@ -92,6 +92,9 @@ class Invader extends BABYLON.Mesh {
         if (index !== -1) {
             this.generator.invaders.splice(index, 1);
         }
+        if (Math.random() > 0.5) {
+            this.main.bonusGenerator.popLetter(this.position);
+        }
         this.dispose();
     }
 }

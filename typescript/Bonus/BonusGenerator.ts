@@ -3,7 +3,7 @@ class BonusGenerator {
     public bonuses: Bonus[];
 
     public playerRange: number = 100;
-    public letterRate: number = 5000;
+    public letterRate: number = 30000;
 
     public get grid(): LetterGrid {
         return this.main.grid;
@@ -18,21 +18,57 @@ class BonusGenerator {
     }
 
     public start(): void {
-        this._popLetter();
+        this._popLetterLoop();
     }
 
-    private _popLetter(): void {
+    public popLetter(pos?: BABYLON.Vector3): void {
         let letter = new Letter(this.main);
         this.bonuses.push(letter);
-        let minX = Math.max(0, this.spaceship.position.x - this.playerRange);
-        let maxX = Math.min(LetterGrid.GRID_DISTANCE, this.spaceship.position.x + this.playerRange);
-        let minZ = Math.max(0, this.spaceship.position.x - this.playerRange);
-        let maxZ = Math.min(LetterGrid.GRID_DISTANCE, this.spaceship.position.z + this.playerRange);
-        letter.position.x = Math.random() * (maxX - minX) + minX;
-        letter.position.z = Math.random() * (maxZ - minZ) + minZ;
+        if (pos) {
+            letter.position.copyFrom(pos);
+        } else {
+            let minX = Math.max(0, this.spaceship.position.x - this.playerRange);
+            let maxX = Math.min(LetterGrid.GRID_DISTANCE, this.spaceship.position.x + this.playerRange);
+            let minZ = Math.max(0, this.spaceship.position.x - this.playerRange);
+            let maxZ = Math.min(LetterGrid.GRID_DISTANCE, this.spaceship.position.z + this.playerRange);
+            letter.position.x = Math.random() * (maxX - minX) + minX;
+            letter.position.z = Math.random() * (maxZ - minZ) + minZ;
+        }
+    }
+
+    public popBonus(pos?: BABYLON.Vector3): void {
+        let bonus: Bonus;
+        let r = Math.random();
+        if (r > 0.75) {
+            bonus = new StaminaBonus(this.main);
+        }
+        else if (r > 0.5) {
+            bonus = new ShieldBonus(this.main);
+        }
+        else if (r > 0.25) {
+            bonus = new PowerBonus(this.main);
+        }
+        else {
+            bonus = new FirerateBonus(this.main);
+        }
+        this.bonuses.push(bonus);
+        if (pos) {
+            bonus.position.copyFrom(pos);
+        } else {
+            let minX = Math.max(0, this.spaceship.position.x - this.playerRange);
+            let maxX = Math.min(LetterGrid.GRID_DISTANCE, this.spaceship.position.x + this.playerRange);
+            let minZ = Math.max(0, this.spaceship.position.x - this.playerRange);
+            let maxZ = Math.min(LetterGrid.GRID_DISTANCE, this.spaceship.position.z + this.playerRange);
+            bonus.position.x = Math.random() * (maxX - minX) + minX;
+            bonus.position.z = Math.random() * (maxZ - minZ) + minZ;
+        }
+    }
+
+    private _popLetterLoop(): void {
+        this.popLetter();
         setTimeout(
             () => {
-                this._popLetter();
+                this._popLetterLoop();
             },
             Math.random() * this.letterRate * 1.5
         );
