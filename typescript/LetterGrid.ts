@@ -257,6 +257,7 @@ class LetterGrid {
 
     private _acceptPendingCells(): void {
         TipsGenerator.ShowRandomGood();
+        this.main.goodSound.play();
         let counter = 0;
         let l = Math.floor(this.pendingCells.length / 2);
         this.pendingCells.forEach(
@@ -281,6 +282,7 @@ class LetterGrid {
 
     private _rejectPendingCells(): void {
         TipsGenerator.ShowRandomBad();
+        this.main.badSound.play();
         this.pendingCells.forEach(
             (c) => {
                 c.setWrongState();

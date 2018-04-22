@@ -1,6 +1,6 @@
 class WordValidator {
 
-    public static readonly MAX_WORD_LENGTH: number = 6;
+    public static readonly MAX_WORD_LENGTH: number = 8;
     private _words: string[][] = [];
 
     constructor() {

@@ -194,6 +194,7 @@ class LetterGrid {
     }
     _acceptPendingCells() {
         TipsGenerator.ShowRandomGood();
+        this.main.goodSound.play();
         let counter = 0;
         let l = Math.floor(this.pendingCells.length / 2);
         this.pendingCells.forEach((c) => {
@@ -212,6 +213,7 @@ class LetterGrid {
     }
     _rejectPendingCells() {
         TipsGenerator.ShowRandomBad();
+        this.main.badSound.play();
         this.pendingCells.forEach((c) => {
             c.setWrongState();
             setTimeout(() => {
@@ -345,20 +347,13 @@ class Main {
         this.ground.position.y = -0.2;
         this.ground.position.z = LetterGrid.GRID_LENGTH * LetterGrid.GRID_SIZE * 0.5;
         this.ground.isVisible = false;
-        /*
-        let skybox: BABYLON.Mesh = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 100.0 }, this.scene);
-        skybox.infiniteDistance = true;
-        let skyboxMaterial: BABYLON.StandardMaterial = new BABYLON.StandardMaterial("skyBox", this.scene);
-        skyboxMaterial.backFaceCulling = false;
-        skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture(
-            "skyboxes/green-nebulae",
-            this.scene,
-            ["-px.png", "-py.png", "-pz.png", "-nx.png", "-ny.png", "-nz.png"]);
-        skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
-        skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
-        skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
-        skybox.material = skyboxMaterial;
-        */
+        this.greenLaserSound = new BABYLON.Sound("greenLaserSound", "sounds/laser-shot-1.wav", Main.instance.scene);
+        this.blueLaserSound = new BABYLON.Sound("blueLaserSound", "sounds/laser-shot-2.wav", Main.instance.scene);
+        this.redLaserSound = new BABYLON.Sound("redLaserSound", "sounds/laser-shot-3.wav", Main.instance.scene);
+        this.purpleLaserSound = new BABYLON.Sound("purpleLaserSound", "sounds/laser-shot-4.wav", Main.instance.scene);
+        this.goodSound = new BABYLON.Sound("purpleLaserSound", "sounds/good.wav", Main.instance.scene);
+        this.badSound = new BABYLON.Sound("purpleLaserSound", "sounds/bad.wav", Main.instance.scene);
+        this.upgradeSound = new BABYLON.Sound("purpleLaserSound", "sounds/upgrade.wav", Main.instance.scene);
         this.grid = new LetterGrid(this);
         this.spaceship = new Spaceship(this);
         this.spaceship.position.copyFromFloats(30, 0, 30);
@@ -493,6 +488,7 @@ class Spaceship extends BABYLON.Mesh {
         this._staminaXp++;
         this.hitPoints++;
         if (this._staminaXp > this.staminaLevel) {
+            this.main.upgradeSound.play();
             this.staminaLevel++;
             this.regenCooldown--;
             this.staminaCoef = Math.pow(1.1, this.staminaLevel);
@@ -504,6 +500,7 @@ class Spaceship extends BABYLON.Mesh {
         this._shieldXp++;
         this.hitPoints++;
         if (this._shieldXp > this.shieldLevel) {
+            this.main.upgradeSound.play();
             this.shieldLevel++;
             this.shieldCoef = Math.pow(1.1, this.shieldLevel);
             this._shieldXp = 0;
@@ -514,6 +511,7 @@ class Spaceship extends BABYLON.Mesh {
         this._powerXp++;
         this.hitPoints++;
         if (this._powerXp > this.powerLevel) {
+            this.main.upgradeSound.play();
             this.powerLevel++;
             this.powerCoef = Math.pow(1.1, this.powerLevel);
             this._powerXp = 0;
@@ -524,6 +522,7 @@ class Spaceship extends BABYLON.Mesh {
         this._firerateXp++;
         this.hitPoints++;
         if (this._firerateXp > this.firerateLevel) {
+            this.main.upgradeSound.play();
             this.firerateLevel++;
             this.firerateCoef = Math.pow(1.1, this.firerateLevel);
             this._firerateXp = 0;
@@ -937,7 +936,7 @@ class WordValidator {
         return WordValidator.letters[r];
     }
 }
-WordValidator.MAX_WORD_LENGTH = 6;
+WordValidator.MAX_WORD_LENGTH = 8;
 WordValidator.letters = "EEEEEEEEEEEEAAAAAAAAAIIIIIIIIIOOOOOOOONNNNNNRRRRRRTTTTTTLLLLSSSSUUUUDDDDGGGBBCCMMPPFFHHVVWWYYKJXQZ";
 class Bonus extends BABYLON.Mesh {
     constructor(name, main) {
@@ -1500,19 +1499,19 @@ class Shot {
         let color = Math.floor(damage / 10);
         if (color > 3) {
             this._instance = Shot.purpleLaserBase.createInstance("shotInstance");
-            Shot.purpleLaserSound.play();
+            this.main.purpleLaserSound.play();
         }
         else if (color > 2) {
             this._instance = Shot.redLaserBase.createInstance("shotInstance");
-            Shot.redLaserSound.play();
+            this.main.redLaserSound.play();
         }
         else if (color > 1) {
             this._instance = Shot.blueLaserBase.createInstance("shotInstance");
-            Shot.blueLaserSound.play();
+            this.main.blueLaserSound.play();
         }
         else {
             this._instance = Shot.greenLaserBase.createInstance("shotInstance");
-            Shot.greenLaserSound.play();
+            this.main.greenLaserSound.play();
         }
         let size = BABYLON.Scalar.Clamp((damage - color * 10) / 10 + 1, 1, 3);
         this._instance.position.copyFrom(position);
@@ -1526,30 +1525,6 @@ class Shot {
         else {
             this.main.scene.onBeforeRenderObservable.add(this._invaderShotUpdate);
         }
-    }
-    static get greenLaserSound() {
-        if (!this._greenLaserSound) {
-            this._greenLaserSound = new BABYLON.Sound("greenLaserSound", "sounds/laser-shot-1.wav", Main.instance.scene);
-        }
-        return this._greenLaserSound;
-    }
-    static get blueLaserSound() {
-        if (!this._blueLaserSound) {
-            this._blueLaserSound = new BABYLON.Sound("blueLaserSound", "sounds/laser-shot-2.wav", Main.instance.scene);
-        }
-        return this._blueLaserSound;
-    }
-    static get redLaserSound() {
-        if (!this._redLaserSound) {
-            this._redLaserSound = new BABYLON.Sound("redLaserSound", "sounds/laser-shot-3.wav", Main.instance.scene);
-        }
-        return this._redLaserSound;
-    }
-    static get purpleLaserSound() {
-        if (!this._purpleLaserSound) {
-            this._purpleLaserSound = new BABYLON.Sound("purpleLaserSound", "sounds/laser-shot-4.wav", Main.instance.scene);
-        }
-        return this._purpleLaserSound;
     }
     static get greenLaserBase() {
         if (!this._greenLaserBase) {

@@ -16,6 +16,14 @@ class Main {
 	public invaderGenerator: InvaderGenerator;
 	public spaceship: Spaceship;
 
+	public greenLaserSound: BABYLON.Sound;
+	public blueLaserSound: BABYLON.Sound;
+	public redLaserSound: BABYLON.Sound;
+	public purpleLaserSound: BABYLON.Sound;
+	public upgradeSound: BABYLON.Sound;
+	public goodSound: BABYLON.Sound;
+	public badSound: BABYLON.Sound;
+
 	constructor(canvasElement: string) {
 		Main.instance = this;
 		this.canvas = document.getElementById(canvasElement) as HTMLCanvasElement;
@@ -51,20 +59,13 @@ class Main {
 		this.ground.position.z = LetterGrid.GRID_LENGTH * LetterGrid.GRID_SIZE * 0.5;
 		this.ground.isVisible = false;
 
-		/*
-		let skybox: BABYLON.Mesh = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 100.0 }, this.scene);
-		skybox.infiniteDistance = true;
-		let skyboxMaterial: BABYLON.StandardMaterial = new BABYLON.StandardMaterial("skyBox", this.scene);
-		skyboxMaterial.backFaceCulling = false;
-		skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture(
-			"skyboxes/green-nebulae",
-			this.scene,
-			["-px.png", "-py.png", "-pz.png", "-nx.png", "-ny.png", "-nz.png"]);
-		skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
-		skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
-		skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
-		skybox.material = skyboxMaterial;
-		*/
+		this.greenLaserSound = new BABYLON.Sound("greenLaserSound", "sounds/laser-shot-1.wav", Main.instance.scene);
+		this.blueLaserSound = new BABYLON.Sound("blueLaserSound", "sounds/laser-shot-2.wav", Main.instance.scene);
+		this.redLaserSound = new BABYLON.Sound("redLaserSound", "sounds/laser-shot-3.wav", Main.instance.scene);
+		this.purpleLaserSound = new BABYLON.Sound("purpleLaserSound", "sounds/laser-shot-4.wav", Main.instance.scene);
+		this.goodSound = new BABYLON.Sound("purpleLaserSound", "sounds/good.wav", Main.instance.scene);
+		this.badSound = new BABYLON.Sound("purpleLaserSound", "sounds/bad.wav", Main.instance.scene);
+		this.upgradeSound = new BABYLON.Sound("purpleLaserSound", "sounds/upgrade.wav", Main.instance.scene);
 
 		this.grid = new LetterGrid(this);
 
