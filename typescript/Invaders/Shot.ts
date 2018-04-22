@@ -42,7 +42,7 @@ class Shot {
         for (let i = 0; i < this.generator.invaders.length; i++) {
             let invader = this.generator.invaders[i];
             if (BABYLON.Vector3.DistanceSquared(this._instance.position, invader.position) < 4) {
-                invader.kill();
+                invader.wound(this.damage);
                 this.dispose();
                 return
             }

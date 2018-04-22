@@ -201,7 +201,7 @@ class Spaceship extends BABYLON.Mesh {
     }
     
     private _coolDown: number = 0;
-    public shot(): void {
+    public shoot(): void {
         if (this._coolDown > 0) {
             return;
         }
@@ -210,10 +210,10 @@ class Spaceship extends BABYLON.Mesh {
             this.position,
             this.getDirection(BABYLON.Axis.Z),
             20,
-            1,
+            30,
             100,
             this.main
         );
-        this._coolDown = 30;
+        this._coolDown = 5;
     }
 }

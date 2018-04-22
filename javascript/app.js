@@ -521,12 +521,12 @@ class Spaceship extends BABYLON.Mesh {
         this.firerateTextUI.color = "white";
         this.gui.addControl(this.firerateTextUI);
     }
-    shot() {
+    shoot() {
         if (this._coolDown > 0) {
             return;
         }
-        new Shot(true, this.position, this.getDirection(BABYLON.Axis.Z), 20, 1, 100, this.main);
-        this._coolDown = 30;
+        new Shot(true, this.position, this.getDirection(BABYLON.Axis.Z), 20, 30, 100, this.main);
+        this._coolDown = 5;
     }
 }
 class SpaceshipCamera extends BABYLON.FreeCamera {
@@ -586,7 +586,7 @@ class SpaceshipMouseInput {
         this.mouseDown = false;
         this._checkInput = () => {
             if (this.mouseDown) {
-                this.spaceship.shot();
+                this.spaceship.shoot();
             }
             let pick = this.scene.pick(this.scene.pointerX, this.scene.pointerY, (m) => { return m === this.ground; });
             if (pick && pick.hit) {
@@ -870,11 +870,18 @@ class Invader extends BABYLON.Mesh {
     constructor(main) {
         super("Invader", main.scene);
         this.main = main;
+        this.hp = 50;
         this.thrust = 1;
         this.velocity = BABYLON.Vector3.Zero();
         this._update = () => {
             let deltaTime = this.getEngine().getDeltaTime() / 1000;
-            this.thrust = BABYLON.Scalar.Clamp(BABYLON.Vector3.Distance(this.spaceship.position, this.position) * 0.5, 0, 10);
+            let distanceToTarget = BABYLON.Vector3.Distance(this.spaceship.position, this.position);
+            if (distanceToTarget > 5) {
+                this.thrust = BABYLON.Scalar.Clamp(distanceToTarget * 0.5, 0, 10);
+            }
+            else {
+                this.thrust = 10;
+            }
             this.velocity.addInPlace(this.getDirection(BABYLON.Axis.Z).scale(this.thrust * deltaTime));
             let dragX = this.getDirection(BABYLON.Axis.X);
             let dragXComp = BABYLON.Vector3.Dot(this.velocity, dragX);
@@ -904,6 +911,9 @@ class Invader extends BABYLON.Mesh {
             this.position.addInPlace(this.velocity.scale(deltaTime));
             this.position.y = 0;
             let newDir = this.spaceship.position.subtract(this.position);
+            if (distanceToTarget < 5) {
+                newDir.scaleInPlace(-1);
+            }
             let newRight = BABYLON.Vector3.Cross(BABYLON.Axis.Y, newDir);
             let newRotation = BABYLON.Quaternion.Identity();
             BABYLON.Quaternion.RotationQuaternionFromAxisToRef(newRight, BABYLON.Axis.Y, newDir, newRotation);
@@ -925,6 +935,12 @@ class Invader extends BABYLON.Mesh {
     }
     get generator() {
         return this.main.invaderGenerator;
+    }
+    wound(damage) {
+        this.hp -= damage;
+        if (this.hp < 0) {
+            this.kill();
+        }
     }
     kill() {
         this.getScene().onBeforeRenderObservable.removeCallback(this._update);
@@ -990,7 +1006,7 @@ class Shot {
             for (let i = 0; i < this.generator.invaders.length; i++) {
                 let invader = this.generator.invaders[i];
                 if (BABYLON.Vector3.DistanceSquared(this._instance.position, invader.position) < 4) {
-                    invader.kill();
+                    invader.wound(this.damage);
                     this.dispose();
                     return;
                 }

@@ -2,6 +2,7 @@ class Invader extends BABYLON.Mesh {
 
     private _instance: BABYLON.Mesh;
 
+    public hp: number = 50;
     public thrust: number = 1;
     public velocity: BABYLON.Vector3 = BABYLON.Vector3.Zero();
 
@@ -36,11 +37,17 @@ class Invader extends BABYLON.Mesh {
 
     private _update = () => {
         let deltaTime = this.getEngine().getDeltaTime() / 1000;
-        this.thrust = BABYLON.Scalar.Clamp(
-            BABYLON.Vector3.Distance(this.spaceship.position,this.position) * 0.5,
-            0,
-            10
-        );
+        let distanceToTarget = BABYLON.Vector3.Distance(this.spaceship.position,this.position);
+        if (distanceToTarget > 5) {
+            this.thrust = BABYLON.Scalar.Clamp(
+                distanceToTarget * 0.5,
+                0,
+                10
+            );
+        }
+        else {
+            this.thrust = 10;
+        }
         this.velocity.addInPlace(
             this.getDirection(BABYLON.Axis.Z).scale(this.thrust * deltaTime)
         );
@@ -75,6 +82,9 @@ class Invader extends BABYLON.Mesh {
         this.position.y = 0;
         
         let newDir = this.spaceship.position.subtract(this.position);
+        if (distanceToTarget < 5) {
+            newDir.scaleInPlace(-1);
+        }
         let newRight = BABYLON.Vector3.Cross(BABYLON.Axis.Y, newDir);
         let newRotation = BABYLON.Quaternion.Identity();
         BABYLON.Quaternion.RotationQuaternionFromAxisToRef(
@@ -84,6 +94,13 @@ class Invader extends BABYLON.Mesh {
             newRotation
         );
         BABYLON.Quaternion.SlerpToRef(this.rotationQuaternion, newRotation, 0.1, this.rotationQuaternion);
+    }
+
+    public wound(damage: number) {
+        this.hp -= damage;
+        if (this.hp < 0) {
+            this.kill();
+        }
     }
 
     public kill() {

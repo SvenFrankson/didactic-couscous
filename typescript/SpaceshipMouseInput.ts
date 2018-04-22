@@ -26,7 +26,7 @@ class SpaceshipMouseInput {
 
     private _checkInput = () => {
         if (this.mouseDown) {
-            this.spaceship.shot();
+            this.spaceship.shoot();
         }
         let pick = this.scene.pick(this.scene.pointerX, this.scene.pointerY, (m) => { return m === this.ground; });
         if (pick && pick.hit) {
