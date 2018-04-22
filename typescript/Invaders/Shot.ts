@@ -1,5 +1,37 @@
 class Shot {
 
+    private static _greenLaserSound: BABYLON.Sound;
+    public static get greenLaserSound(): BABYLON.Sound {
+        if (!this._greenLaserSound) {
+            this._greenLaserSound = new BABYLON.Sound("greenLaserSound", "sounds/laser-shot-1.wav", Main.instance.scene);
+        }
+        return this._greenLaserSound;
+    }
+
+    private static _blueLaserSound: BABYLON.Sound;
+    public static get blueLaserSound(): BABYLON.Sound {
+        if (!this._blueLaserSound) {
+            this._blueLaserSound = new BABYLON.Sound("blueLaserSound", "sounds/laser-shot-2.wav", Main.instance.scene);
+        }
+        return this._blueLaserSound;
+    }
+
+    private static _redLaserSound: BABYLON.Sound;
+    public static get redLaserSound(): BABYLON.Sound {
+        if (!this._redLaserSound) {
+            this._redLaserSound = new BABYLON.Sound("redLaserSound", "sounds/laser-shot-3.wav", Main.instance.scene);
+        }
+        return this._redLaserSound;
+    }
+
+    private static _purpleLaserSound: BABYLON.Sound;
+    public static get purpleLaserSound(): BABYLON.Sound {
+        if (!this._purpleLaserSound) {
+            this._purpleLaserSound = new BABYLON.Sound("purpleLaserSound", "sounds/laser-shot-4.wav", Main.instance.scene);
+        }
+        return this._purpleLaserSound;
+    }
+
     private static _greenLaserBase: BABYLON.Mesh;
     public static get greenLaserBase(): BABYLON.Mesh {
         if (!this._greenLaserBase) {
@@ -99,12 +131,16 @@ class Shot {
         let color = Math.floor(damage / 10);
         if (color > 3) {
             this._instance = Shot.purpleLaserBase.createInstance("shotInstance");
+            Shot.purpleLaserSound.play();
         } else if (color > 2) {
             this._instance = Shot.redLaserBase.createInstance("shotInstance");
+            Shot.redLaserSound.play();
         } else if (color > 1) {
             this._instance = Shot.blueLaserBase.createInstance("shotInstance");
+            Shot.blueLaserSound.play();
         } else {
             this._instance = Shot.greenLaserBase.createInstance("shotInstance");
+            Shot.greenLaserSound.play();
         }
         let size = BABYLON.Scalar.Clamp((damage - color * 10) / 10 + 1, 1, 3);
         this._instance.position.copyFrom(position);

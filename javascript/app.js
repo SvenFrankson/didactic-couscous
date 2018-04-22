@@ -1207,15 +1207,19 @@ class Shot {
         let color = Math.floor(damage / 10);
         if (color > 3) {
             this._instance = Shot.purpleLaserBase.createInstance("shotInstance");
+            Shot.purpleLaserSound.play();
         }
         else if (color > 2) {
             this._instance = Shot.redLaserBase.createInstance("shotInstance");
+            Shot.redLaserSound.play();
         }
         else if (color > 1) {
             this._instance = Shot.blueLaserBase.createInstance("shotInstance");
+            Shot.blueLaserSound.play();
         }
         else {
             this._instance = Shot.greenLaserBase.createInstance("shotInstance");
+            Shot.greenLaserSound.play();
         }
         let size = BABYLON.Scalar.Clamp((damage - color * 10) / 10 + 1, 1, 3);
         this._instance.position.copyFrom(position);
@@ -1229,6 +1233,30 @@ class Shot {
         else {
             this.main.scene.onBeforeRenderObservable.add(this._invaderShotUpdate);
         }
+    }
+    static get greenLaserSound() {
+        if (!this._greenLaserSound) {
+            this._greenLaserSound = new BABYLON.Sound("greenLaserSound", "sounds/laser-shot-1.wav", Main.instance.scene);
+        }
+        return this._greenLaserSound;
+    }
+    static get blueLaserSound() {
+        if (!this._blueLaserSound) {
+            this._blueLaserSound = new BABYLON.Sound("blueLaserSound", "sounds/laser-shot-2.wav", Main.instance.scene);
+        }
+        return this._blueLaserSound;
+    }
+    static get redLaserSound() {
+        if (!this._redLaserSound) {
+            this._redLaserSound = new BABYLON.Sound("redLaserSound", "sounds/laser-shot-3.wav", Main.instance.scene);
+        }
+        return this._redLaserSound;
+    }
+    static get purpleLaserSound() {
+        if (!this._purpleLaserSound) {
+            this._purpleLaserSound = new BABYLON.Sound("purpleLaserSound", "sounds/laser-shot-4.wav", Main.instance.scene);
+        }
+        return this._purpleLaserSound;
     }
     static get greenLaserBase() {
         if (!this._greenLaserBase) {
