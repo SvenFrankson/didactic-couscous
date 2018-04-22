@@ -11,10 +11,12 @@ class WordValidator {
         this._words = [];
         for (let i = 2; i <= WordValidator.MAX_WORD_LENGTH; i++) {
             $.get(
-                "dictionnary/en/" + i + ".txt",
+                "dictionnary/" + Main.LANGUAGE + "/" + i + ".txt",
                 (data: string) => {
                     this._words[i] = data.split(" ");
-                    console.log("Words in " + i + " letters : " + this._words[i].length);
+                    for (let j = 0; j < this._words[i].length; j++) {
+                        this._words[i][j] = this._words[i][j].toLowerCase();
+                    }
                 }
             )
         }
@@ -27,15 +29,19 @@ class WordValidator {
         }
         else {
             let words = this._words[l];
-            console.log("Check word " + word);
-            console.log("In " + words.length + " words");
             return words.indexOf(word.toLowerCase()) !== -1;
         }
     }
 
-    public static letters = "EEEEEEEEEEEEAAAAAAAAAIIIIIIIIIOOOOOOOONNNNNNRRRRRRTTTTTTLLLLSSSSUUUUDDDDGGGBBCCMMPPFFHHVVWWYYKJXQZ";
+    public static lettersEN = "EEEEEEEEEEEEAAAAAAAAAIIIIIIIIIOOOOOOOONNNNNNRRRRRRTTTTTTLLLLSSSSUUUUDDDDGGGBBCCMMPPFFHHVVWWYYKJXQZ";
+    public static lettersFR = "EEEEEEEEEEEEEEEAAAAAAAAAIIIIIIIINNNNNNOOOOOORRRRRRSSSSSSTTTTTTUUUUUULLLLLDDDMMMGGBBCCPPFFHHVVJQKWXYZ";
     public static randomLetter(): string {
-        let r = Math.floor(Math.random() * WordValidator.letters.length);
-        return WordValidator.letters[r];
+        if (Main.LANGUAGE === "en") {
+            let r = Math.floor(Math.random() * WordValidator.lettersEN.length);
+            return WordValidator.lettersEN[r];
+        } else if (Main.LANGUAGE === "fr") {
+            let r = Math.floor(Math.random() * WordValidator.lettersFR.length);
+            return WordValidator.lettersFR[r];
+        }
     }
 }

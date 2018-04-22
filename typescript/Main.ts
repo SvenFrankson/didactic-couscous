@@ -1,5 +1,6 @@
 class Main {
 
+	public static LANGUAGE: string = "en";
 	public static MOUSE_ONLY_CONTROL: boolean = false;
 	public static KEYBOARD_LOCAL_CONTROL: boolean = true;
 
@@ -104,9 +105,14 @@ class Main {
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-	$("#play").on("click", () => {
+	$("#play-fr").on("click", () => {
+		Main.LANGUAGE = "fr";
 		Main.Play();
-	})
+	});
+	$("#play-en").on("click", () => {
+		Main.LANGUAGE = "en";
+		Main.Play();
+	});
 })
 
 

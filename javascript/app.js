@@ -381,10 +381,16 @@ class Main {
         game.animate();
     }
 }
+Main.LANGUAGE = "en";
 Main.MOUSE_ONLY_CONTROL = false;
 Main.KEYBOARD_LOCAL_CONTROL = true;
 window.addEventListener("DOMContentLoaded", () => {
-    $("#play").on("click", () => {
+    $("#play-fr").on("click", () => {
+        Main.LANGUAGE = "fr";
+        Main.Play();
+    });
+    $("#play-en").on("click", () => {
+        Main.LANGUAGE = "en";
         Main.Play();
     });
 });
@@ -548,6 +554,14 @@ class Spaceship extends BABYLON.Mesh {
         return this.main.gui;
     }
     _createUI() {
+        let leftSideUI = new BABYLON.GUI.Image("leftSideUI", "textures/left_side_ui.png");
+        leftSideUI.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+        leftSideUI.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+        leftSideUI.left = "0px";
+        leftSideUI.top = "-75px";
+        leftSideUI.width = "475px";
+        leftSideUI.height = "950px";
+        this.gui.addControl(leftSideUI);
         this.scoreUI = new BABYLON.GUI.TextBlock("ScoreBlock", "SCORE 0");
         this.scoreUI.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
         this.scoreUI.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
@@ -913,9 +927,11 @@ class WordValidator {
     initialize() {
         this._words = [];
         for (let i = 2; i <= WordValidator.MAX_WORD_LENGTH; i++) {
-            $.get("dictionnary/en/" + i + ".txt", (data) => {
+            $.get("dictionnary/" + Main.LANGUAGE + "/" + i + ".txt", (data) => {
                 this._words[i] = data.split(" ");
-                console.log("Words in " + i + " letters : " + this._words[i].length);
+                for (let j = 0; j < this._words[i].length; j++) {
+                    this._words[i][j] = this._words[i][j].toLowerCase();
+                }
             });
         }
     }
@@ -926,18 +942,23 @@ class WordValidator {
         }
         else {
             let words = this._words[l];
-            console.log("Check word " + word);
-            console.log("In " + words.length + " words");
             return words.indexOf(word.toLowerCase()) !== -1;
         }
     }
     static randomLetter() {
-        let r = Math.floor(Math.random() * WordValidator.letters.length);
-        return WordValidator.letters[r];
+        if (Main.LANGUAGE === "en") {
+            let r = Math.floor(Math.random() * WordValidator.lettersEN.length);
+            return WordValidator.lettersEN[r];
+        }
+        else if (Main.LANGUAGE === "fr") {
+            let r = Math.floor(Math.random() * WordValidator.lettersFR.length);
+            return WordValidator.lettersFR[r];
+        }
     }
 }
 WordValidator.MAX_WORD_LENGTH = 8;
-WordValidator.letters = "EEEEEEEEEEEEAAAAAAAAAIIIIIIIIIOOOOOOOONNNNNNRRRRRRTTTTTTLLLLSSSSUUUUDDDDGGGBBCCMMPPFFHHVVWWYYKJXQZ";
+WordValidator.lettersEN = "EEEEEEEEEEEEAAAAAAAAAIIIIIIIIIOOOOOOOONNNNNNRRRRRRTTTTTTLLLLSSSSUUUUDDDDGGGBBCCMMPPFFHHVVWWYYKJXQZ";
+WordValidator.lettersFR = "EEEEEEEEEEEEEEEAAAAAAAAAIIIIIIIINNNNNNOOOOOORRRRRRSSSSSSTTTTTTUUUUUULLLLLDDDMMMGGBBCCPPFFHHVVJQKWXYZ";
 class Bonus extends BABYLON.Mesh {
     constructor(name, main) {
         super(name, main.scene);

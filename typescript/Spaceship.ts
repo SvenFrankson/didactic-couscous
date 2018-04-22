@@ -132,6 +132,15 @@ class Spaceship extends BABYLON.Mesh {
 
     private _createUI(): void {
 
+        let leftSideUI = new BABYLON.GUI.Image("leftSideUI", "textures/left_side_ui.png");
+        leftSideUI.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+        leftSideUI.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+        leftSideUI.left = "0px";
+        leftSideUI.top = "-75px";
+        leftSideUI.width = "475px";
+        leftSideUI.height = "950px";
+        this.gui.addControl(leftSideUI);
+
         this.scoreUI = new BABYLON.GUI.TextBlock("ScoreBlock", "SCORE 0");
         this.scoreUI.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
         this.scoreUI.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
