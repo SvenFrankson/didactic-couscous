@@ -298,12 +298,18 @@ class Spaceship extends BABYLON.Mesh {
             this._coolDown--;
         }
         let deltaTime = this.getEngine().getDeltaTime() / 1000;
-        this.velocity.addInPlace(
-            this.getDirection(BABYLON.Axis.Z).scale(this.thrust * deltaTime)
-        );
-        this.velocity.addInPlace(
-            this.getDirection(BABYLON.Axis.X).scale(this.straff * deltaTime)
-        );
+        if (Main.MOUSE_ONLY_CONTROL || Main.instance) {
+            this.velocity.addInPlace(
+                this.getDirection(BABYLON.Axis.Z).scale(this.thrust * deltaTime)
+            );
+            this.velocity.addInPlace(
+                this.getDirection(BABYLON.Axis.X).scale(this.straff * deltaTime)
+            );
+        }
+        else {
+            this.velocity.z += this.thrust * deltaTime;
+            this.velocity.x += this.straff * deltaTime;
+        }
         let dragX = this.getDirection(BABYLON.Axis.X);
         let dragXComp = BABYLON.Vector3.Dot(this.velocity, dragX);
         dragXComp *= Math.abs(dragXComp);

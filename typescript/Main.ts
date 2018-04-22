@@ -1,5 +1,8 @@
 class Main {
 
+	public static MOUSE_ONLY_CONTROL: boolean = false;
+	public static KEYBOARD_LOCAL_CONTROL: boolean = true;
+
 	public static instance: Main;
 	public canvas: HTMLCanvasElement;
 	public engine: BABYLON.Engine;

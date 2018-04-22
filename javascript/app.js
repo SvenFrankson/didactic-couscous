@@ -372,6 +372,8 @@ class Main {
         game.animate();
     }
 }
+Main.MOUSE_ONLY_CONTROL = false;
+Main.KEYBOARD_LOCAL_CONTROL = true;
 window.addEventListener("DOMContentLoaded", () => {
     $("#play").on("click", () => {
         Main.Play();
@@ -402,8 +404,14 @@ class Spaceship extends BABYLON.Mesh {
                 this._coolDown--;
             }
             let deltaTime = this.getEngine().getDeltaTime() / 1000;
-            this.velocity.addInPlace(this.getDirection(BABYLON.Axis.Z).scale(this.thrust * deltaTime));
-            this.velocity.addInPlace(this.getDirection(BABYLON.Axis.X).scale(this.straff * deltaTime));
+            if (Main.MOUSE_ONLY_CONTROL || Main.instance) {
+                this.velocity.addInPlace(this.getDirection(BABYLON.Axis.Z).scale(this.thrust * deltaTime));
+                this.velocity.addInPlace(this.getDirection(BABYLON.Axis.X).scale(this.straff * deltaTime));
+            }
+            else {
+                this.velocity.z += this.thrust * deltaTime;
+                this.velocity.x += this.straff * deltaTime;
+            }
             let dragX = this.getDirection(BABYLON.Axis.X);
             let dragXComp = BABYLON.Vector3.Dot(this.velocity, dragX);
             dragXComp *= Math.abs(dragXComp);
@@ -698,14 +706,22 @@ class SpaceshipKeyboardInput {
     constructor(spaceship) {
         this.spaceship = spaceship;
         this.leftKeyDown = false;
+        this.upKeyDown = false;
         this.rightKeyDown = false;
+        this.downKeyDown = false;
         this.spacekeyDown = false;
         this._checkInput = () => {
-            if (this.spacekeyDown) {
-                //this.spaceship.thrust = 10;
+            if (this.downKeyDown && this.upKeyDown) {
+                this.spaceship.thrust = 0;
+            }
+            else if (this.downKeyDown) {
+                this.spaceship.thrust = -10;
+            }
+            else if (this.upKeyDown) {
+                this.spaceship.thrust = 10;
             }
             else {
-                //this.spaceship.thrust = 0;
+                this.spaceship.thrust = 0;
             }
             if (this.leftKeyDown && this.rightKeyDown) {
                 this.spaceship.straff = 0;
@@ -727,8 +743,14 @@ class SpaceshipKeyboardInput {
             if (e.keyCode === 37) {
                 this.leftKeyDown = false;
             }
+            if (e.keyCode === 38) {
+                this.upKeyDown = false;
+            }
             if (e.keyCode === 39) {
                 this.rightKeyDown = false;
+            }
+            if (e.keyCode === 40) {
+                this.downKeyDown = false;
             }
         });
         this.canvas.addEventListener("keydown", (e) => {
@@ -738,8 +760,14 @@ class SpaceshipKeyboardInput {
             if (e.keyCode === 37) {
                 this.leftKeyDown = true;
             }
+            if (e.keyCode === 38) {
+                this.upKeyDown = true;
+            }
             if (e.keyCode === 39) {
                 this.rightKeyDown = true;
+            }
+            if (e.keyCode === 40) {
+                this.downKeyDown = true;
             }
         });
         this.canvas.addEventListener("keydown", (e) => {
@@ -766,7 +794,7 @@ class SpaceshipMouseInput {
         this.mouseDown = false;
         this.lockInput = false;
         this._checkInput = () => {
-            if (this.lockInput || this.currentDragNDropIndex > -1) {
+            if (Main.MOUSE_ONLY_CONTROL && (this.lockInput || this.currentDragNDropIndex > -1)) {
                 this.spaceship.thrust = 0;
                 return;
             }
@@ -780,7 +808,9 @@ class SpaceshipMouseInput {
                 let newRotation = BABYLON.Quaternion.Identity();
                 BABYLON.Quaternion.RotationQuaternionFromAxisToRef(newRight, BABYLON.Axis.Y, newDir, newRotation);
                 BABYLON.Quaternion.SlerpToRef(this.spaceship.rotationQuaternion, newRotation, 0.1, this.spaceship.rotationQuaternion);
-                this.spaceship.thrust = BABYLON.Scalar.Clamp(BABYLON.Vector3.Distance(this.spaceship.position, pick.pickedPoint) * 0.5, 0, 10);
+                if (Main.MOUSE_ONLY_CONTROL) {
+                    this.spaceship.thrust = BABYLON.Scalar.Clamp(BABYLON.Vector3.Distance(this.spaceship.position, pick.pickedPoint) * 0.5, 0, 10);
+                }
             }
         };
         this.scene.onBeforeRenderObservable.add(this._checkInput);

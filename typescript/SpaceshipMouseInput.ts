@@ -37,7 +37,7 @@ class SpaceshipMouseInput {
     }
 
     private _checkInput = () => {
-        if (this.lockInput ||this.currentDragNDropIndex > -1) {
+        if (Main.MOUSE_ONLY_CONTROL && (this.lockInput ||this.currentDragNDropIndex > -1)) {
             this.spaceship.thrust = 0;
             return;
         }
@@ -56,11 +56,13 @@ class SpaceshipMouseInput {
                 newRotation
             );
             BABYLON.Quaternion.SlerpToRef(this.spaceship.rotationQuaternion, newRotation, 0.1, this.spaceship.rotationQuaternion);
-            this.spaceship.thrust = BABYLON.Scalar.Clamp(
-                BABYLON.Vector3.Distance(this.spaceship.position, pick.pickedPoint) * 0.5,
-                0,
-                10
-            );
+            if (Main.MOUSE_ONLY_CONTROL) {
+                this.spaceship.thrust = BABYLON.Scalar.Clamp(
+                    BABYLON.Vector3.Distance(this.spaceship.position, pick.pickedPoint) * 0.5,
+                    0,
+                    10
+                );
+            }
         }
     }
 }

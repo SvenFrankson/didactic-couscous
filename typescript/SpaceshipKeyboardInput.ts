@@ -1,7 +1,9 @@
 class SpaceshipKeyboardInput {
 
     private leftKeyDown: boolean = false;
+    private upKeyDown: boolean = false;
     private rightKeyDown: boolean = false;
+    private downKeyDown: boolean = false;
     private spacekeyDown: boolean = false;
     public get scene(): BABYLON.Scene {
         return this.spaceship.main.scene;
@@ -22,8 +24,14 @@ class SpaceshipKeyboardInput {
                 if (e.keyCode === 37) {
                     this.leftKeyDown = false;
                 }
+                if (e.keyCode === 38) {
+                    this.upKeyDown = false;
+                }
                 if (e.keyCode === 39) {
                     this.rightKeyDown = false;
+                }
+                if (e.keyCode === 40) {
+                    this.downKeyDown = false;
                 }
             }
         )
@@ -36,8 +44,14 @@ class SpaceshipKeyboardInput {
                 if (e.keyCode === 37) {
                     this.leftKeyDown = true;
                 }
+                if (e.keyCode === 38) {
+                    this.upKeyDown = true;
+                }
                 if (e.keyCode === 39) {
                     this.rightKeyDown = true;
+                }
+                if (e.keyCode === 40) {
+                    this.downKeyDown = true;
                 }
             }
         )
@@ -56,12 +70,19 @@ class SpaceshipKeyboardInput {
     }
 
     private _checkInput = () => {
-        if (this.spacekeyDown) {
-            //this.spaceship.thrust = 10;
+        if (this.downKeyDown && this.upKeyDown) {
+            this.spaceship.thrust = 0;
+        }
+        else if (this.downKeyDown) {
+            this.spaceship.thrust = -10;
+        }
+        else if (this.upKeyDown) {
+            this.spaceship.thrust = 10;
         }
         else {
-            //this.spaceship.thrust = 0;
+            this.spaceship.thrust = 0;
         }
+        
         if (this.leftKeyDown && this.rightKeyDown) {
             this.spaceship.straff = 0;
         }
