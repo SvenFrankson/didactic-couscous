@@ -8,18 +8,18 @@ Exporter version: 5.4.2, Blender version: 2.78 (sub 0)
 	Python World class constructor completed
 	WARNING: No active camera has been assigned, or is not in a currently selected Blender layer
 	processing begun of mesh:  Spaceship
-		processing begun of Standard material:  Body
 		processing begun of Standard material:  Black
+		processing begun of Standard material:  Red
 		processing begun of Standard material:  Blue
+		processing begun of Standard material:  White
 		processing begun of multimaterial:  spaceship.Multimaterial#0
-		num positions      :  320
-		num normals        :  320
+		num positions      :  2428
+		num normals        :  2428
 		num uvs            :  0
 		num uvs2           :  0
 		num colors         :  0
-		num indices        :  1848
-		WARNING: # of 0 area faces found:  32
+		num indices        :  14088
 ========= Writing of scene file started =========
 ========= Writing of scene file completed =========
 ========= end of processing =========
-elapsed time:  0 min, 0.0948 secs
+elapsed time:  0 min, 0.6797 secs
