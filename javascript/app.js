@@ -975,14 +975,26 @@ class FirerateBonus extends Bonus {
             }
             this.rotation.y += (Math.sin(this.rotation.y) * 0.03 + 0.06);
         };
-        BABYLON.SceneLoader.ImportMesh("", "./models/firerate_bonus.babylon", "", this.getScene(), (meshes) => {
-            if (meshes[0]) {
-                meshes[0].parent = this;
-                this.loaded = true;
-            }
+        BABYLON.SceneLoader.ImportMesh("", "./models/bonus.babylon", "", this.getScene(), (meshes) => {
+            meshes.forEach((m) => {
+                m.parent = this;
+                if (m.material instanceof BABYLON.StandardMaterial) {
+                    if (m.material.name.indexOf("ring") > -1) {
+                        m.material.diffuseColor = BABYLON.Color3.FromHexString("#de6715");
+                        m.renderOutline = true;
+                        m.outlineColor = BABYLON.Color3.White();
+                        m.outlineWidth = 0.025;
+                    }
+                    else if (m.material.name.indexOf("plane") > -1) {
+                        m.material.diffuseTexture = new BABYLON.Texture("textures/firerate_icon.png", Main.instance.scene);
+                        m.material.diffuseTexture.hasAlpha = true;
+                        m.material.useAlphaFromDiffuseTexture;
+                    }
+                }
+            });
+            this.loaded = true;
         });
-        this.position.y = 1;
-        this.rotation.x = Math.PI / 4;
+        this.position.y = 1.5;
         this.getScene().onBeforeRenderObservable.add(this._update);
     }
     catch() {
@@ -1037,14 +1049,26 @@ class PowerBonus extends Bonus {
             }
             this.rotation.y += (Math.sin(this.rotation.y) * 0.03 + 0.06);
         };
-        BABYLON.SceneLoader.ImportMesh("", "./models/power_bonus.babylon", "", this.getScene(), (meshes) => {
-            if (meshes[0]) {
-                meshes[0].parent = this;
-                this.loaded = true;
-            }
+        BABYLON.SceneLoader.ImportMesh("", "./models/bonus.babylon", "", this.getScene(), (meshes) => {
+            meshes.forEach((m) => {
+                m.parent = this;
+                if (m.material instanceof BABYLON.StandardMaterial) {
+                    if (m.material.name.indexOf("ring") > -1) {
+                        m.material.diffuseColor = BABYLON.Color3.FromHexString("#de2d49");
+                        m.renderOutline = true;
+                        m.outlineColor = BABYLON.Color3.White();
+                        m.outlineWidth = 0.025;
+                    }
+                    else if (m.material.name.indexOf("plane") > -1) {
+                        m.material.diffuseTexture = new BABYLON.Texture("textures/power_icon.png", Main.instance.scene);
+                        m.material.diffuseTexture.hasAlpha = true;
+                        m.material.useAlphaFromDiffuseTexture;
+                    }
+                }
+            });
+            this.loaded = true;
         });
-        this.position.y = 1;
-        this.rotation.x = Math.PI / 4;
+        this.position.y = 1.5;
         this.getScene().onBeforeRenderObservable.add(this._update);
     }
     catch() {
@@ -1062,14 +1086,26 @@ class ShieldBonus extends Bonus {
             }
             this.rotation.y += (Math.sin(this.rotation.y) * 0.03 + 0.06);
         };
-        BABYLON.SceneLoader.ImportMesh("", "./models/shield_bonus.babylon", "", this.getScene(), (meshes) => {
-            if (meshes[0]) {
-                meshes[0].parent = this;
-                this.loaded = true;
-            }
+        BABYLON.SceneLoader.ImportMesh("", "./models/bonus.babylon", "", this.getScene(), (meshes) => {
+            meshes.forEach((m) => {
+                m.parent = this;
+                if (m.material instanceof BABYLON.StandardMaterial) {
+                    if (m.material.name.indexOf("ring") > -1) {
+                        m.material.diffuseColor = BABYLON.Color3.FromHexString("#247694");
+                        m.renderOutline = true;
+                        m.outlineColor = BABYLON.Color3.White();
+                        m.outlineWidth = 0.025;
+                    }
+                    else if (m.material.name.indexOf("plane") > -1) {
+                        m.material.diffuseTexture = new BABYLON.Texture("textures/shield_icon.png", Main.instance.scene);
+                        m.material.diffuseTexture.hasAlpha = true;
+                        m.material.useAlphaFromDiffuseTexture;
+                    }
+                }
+            });
+            this.loaded = true;
         });
-        this.position.y = 1;
-        this.rotation.x = Math.PI / 4;
+        this.position.y = 1.5;
         this.getScene().onBeforeRenderObservable.add(this._update);
     }
     catch() {
@@ -1087,14 +1123,26 @@ class StaminaBonus extends Bonus {
             }
             this.rotation.y += (Math.sin(this.rotation.y) * 0.03 + 0.06);
         };
-        BABYLON.SceneLoader.ImportMesh("", "./models/stamina_bonus.babylon", "", this.getScene(), (meshes) => {
-            if (meshes[0]) {
-                meshes[0].parent = this;
-                this.loaded = true;
-            }
+        BABYLON.SceneLoader.ImportMesh("", "./models/bonus.babylon", "", this.getScene(), (meshes) => {
+            meshes.forEach((m) => {
+                m.parent = this;
+                if (m.material instanceof BABYLON.StandardMaterial) {
+                    if (m.material.name.indexOf("ring") > -1) {
+                        m.material.diffuseColor = BABYLON.Color3.FromHexString("#3eae47");
+                        m.renderOutline = true;
+                        m.outlineColor = BABYLON.Color3.White();
+                        m.outlineWidth = 0.025;
+                    }
+                    else if (m.material.name.indexOf("plane") > -1) {
+                        m.material.diffuseTexture = new BABYLON.Texture("textures/stamina_icon.png", Main.instance.scene);
+                        m.material.diffuseTexture.hasAlpha = true;
+                        m.material.useAlphaFromDiffuseTexture;
+                    }
+                }
+            });
+            this.loaded = true;
         });
-        this.position.y = 1;
-        this.rotation.x = Math.PI / 4;
+        this.position.y = 1.5;
         this.getScene().onBeforeRenderObservable.add(this._update);
     }
     catch() {

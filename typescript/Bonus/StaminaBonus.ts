@@ -4,18 +4,32 @@ class StaminaBonus extends Bonus {
         super("Letter", main);
         BABYLON.SceneLoader.ImportMesh(
 			"",
-			"./models/stamina_bonus.babylon",
+			"./models/bonus.babylon",
 			"",
             this.getScene(),
             (meshes) => {
-                if (meshes[0]) {
-                    meshes[0].parent = this;
-                    this.loaded = true;
-                }
+                meshes.forEach(
+                    (m) => {
+                        m.parent = this;
+                        if (m.material instanceof BABYLON.StandardMaterial) {
+                            if (m.material.name.indexOf("ring") > -1) {
+                                m.material.diffuseColor = BABYLON.Color3.FromHexString("#3eae47");
+                                m.renderOutline = true;
+                                m.outlineColor = BABYLON.Color3.White();
+                                m.outlineWidth = 0.025;
+                            }
+                            else if (m.material.name.indexOf("plane") > -1) {
+                                m.material.diffuseTexture = new BABYLON.Texture("textures/stamina_icon.png", Main.instance.scene);
+                                m.material.diffuseTexture.hasAlpha = true;
+                                m.material.useAlphaFromDiffuseTexture;
+                            } 
+                        }
+                    }
+                );
+                this.loaded = true;
             }
         );
-        this.position.y = 1;
-        this.rotation.x = Math.PI / 4;
+        this.position.y = 1.5;
         this.getScene().onBeforeRenderObservable.add(this._update);
     }
 
