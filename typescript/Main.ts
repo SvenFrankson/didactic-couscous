@@ -9,6 +9,7 @@ class Main {
 	public grid: LetterGrid;
 	public wordValidator: WordValidator;
 	public bonusGenerator: BonusGenerator;
+	public invaderGenerator: InvaderGenerator;
 	public spaceship: Spaceship;
 
 	constructor(canvasElement: string) {
@@ -70,7 +71,8 @@ class Main {
 		this.bonusGenerator = new BonusGenerator(this);
 		this.bonusGenerator.start();
 
-		new Invader(this);
+		this.invaderGenerator = new InvaderGenerator(this);
+		this.invaderGenerator.start();
 	}
 
 	public animate(): void {

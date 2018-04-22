@@ -317,7 +317,8 @@ class Main {
         this.wordValidator.initialize();
         this.bonusGenerator = new BonusGenerator(this);
         this.bonusGenerator.start();
-        new Invader(this);
+        this.invaderGenerator = new InvaderGenerator(this);
+        this.invaderGenerator.start();
     }
     animate() {
         this.engine.runRenderLoop(() => {
@@ -340,6 +341,9 @@ class Spaceship extends BABYLON.Mesh {
         this.thrust = 1;
         this.velocity = BABYLON.Vector3.Zero();
         this._update = () => {
+            if (this._coolDown > 0) {
+                this._coolDown--;
+            }
             let deltaTime = this.getEngine().getDeltaTime() / 1000;
             this.velocity.addInPlace(this.getDirection(BABYLON.Axis.Z).scale(this.thrust * deltaTime));
             let dragX = this.getDirection(BABYLON.Axis.X);
@@ -370,6 +374,7 @@ class Spaceship extends BABYLON.Mesh {
             this.position.addInPlace(this.velocity.scale(deltaTime));
             this.position.y = 0;
         };
+        this._coolDown = 0;
         BABYLON.SceneLoader.ImportMesh("", "./models/spaceship.babylon", "", this.getScene(), (meshes) => {
             if (meshes[0]) {
                 meshes[0].parent = this;
@@ -383,6 +388,13 @@ class Spaceship extends BABYLON.Mesh {
     }
     get grid() {
         return this.main.grid;
+    }
+    shot() {
+        if (this._coolDown > 0) {
+            return;
+        }
+        new Shot(true, this.position, this.getDirection(BABYLON.Axis.Z), 20, 1, 100, this.main);
+        this._coolDown = 30;
     }
 }
 class SpaceshipCamera extends BABYLON.FreeCamera {
@@ -437,7 +449,11 @@ class SpaceshipKeyboardInput {
 class SpaceshipMouseInput {
     constructor(spaceship) {
         this.spaceship = spaceship;
+        this.mouseDown = false;
         this._checkInput = () => {
+            if (this.mouseDown) {
+                this.spaceship.shot();
+            }
             let pick = this.scene.pick(this.scene.pointerX, this.scene.pointerY, (m) => { return m === this.ground; });
             if (pick && pick.hit) {
                 let newDir = pick.pickedPoint.subtract(this.spaceship.position);
@@ -447,6 +463,14 @@ class SpaceshipMouseInput {
             }
         };
         this.scene.onBeforeRenderObservable.add(this._checkInput);
+        this.scene.onPointerObservable.add((eventData, eventState) => {
+            if (eventData.type === BABYLON.PointerEventTypes._POINTERDOWN) {
+                this.mouseDown = true;
+            }
+            if (eventData.type === BABYLON.PointerEventTypes._POINTERUP) {
+                this.mouseDown = false;
+            }
+        });
     }
     get scene() {
         return this.spaceship.main.scene;
@@ -625,5 +649,88 @@ class Invader extends BABYLON.Mesh {
     }
     get spaceship() {
         return this.main.spaceship;
+    }
+    get generator() {
+        return this.main.invaderGenerator;
+    }
+    kill() {
+        this.getScene().onBeforeRenderObservable.removeCallback(this._update);
+        let index = this.generator.invaders.indexOf(this);
+        if (index !== -1) {
+            this.generator.invaders.splice(index, 1);
+        }
+        this.dispose();
+    }
+}
+class InvaderGenerator {
+    constructor(main) {
+        this.main = main;
+        this.playerRange = 100;
+        this.invaderRate = 5000;
+        this.invaders = [];
+    }
+    get grid() {
+        return this.main.grid;
+    }
+    get spaceship() {
+        return this.main.spaceship;
+    }
+    start() {
+        this._popInvader();
+    }
+    _popInvader() {
+        let invader = new Invader(this.main);
+        this.invaders.push(invader);
+        let minX = Math.max(0, this.spaceship.position.x - this.playerRange);
+        let maxX = Math.min(LetterGrid.GRID_DISTANCE, this.spaceship.position.x + this.playerRange);
+        let minZ = Math.max(0, this.spaceship.position.x - this.playerRange);
+        let maxZ = Math.min(LetterGrid.GRID_DISTANCE, this.spaceship.position.z + this.playerRange);
+        invader.position.x = Math.random() * (maxX - minX) + minX;
+        invader.position.z = Math.random() * (maxZ - minZ) + minZ;
+        setTimeout(() => {
+            this._popInvader();
+        }, Math.random() * this.invaderRate * 1.5);
+    }
+}
+class Shot {
+    constructor(playerShot, position, direction, speed, damage, range, main) {
+        this.playerShot = playerShot;
+        this.position = position;
+        this.direction = direction;
+        this.speed = speed;
+        this.damage = damage;
+        this.range = range;
+        this.main = main;
+        this._playerShotUpdate = () => {
+            let deltaTime = this.main.engine.getDeltaTime() / 1000;
+            this._instance.position.addInPlace(this.direction.scale(this.speed * deltaTime));
+            if (this.position.x < -64 ||
+                this.position.x > LetterGrid.GRID_DISTANCE + 64 ||
+                this.position.z < -64 ||
+                this.position.z > LetterGrid.GRID_DISTANCE + 64) {
+                this.dispose();
+                return;
+            }
+            for (let i = 0; i < this.generator.invaders.length; i++) {
+                let invader = this.generator.invaders[i];
+                if (BABYLON.Vector3.DistanceSquared(this._instance.position, invader.position) < 4) {
+                    invader.kill();
+                    this.dispose();
+                    return;
+                }
+            }
+        };
+        this._instance = BABYLON.MeshBuilder.CreateBox("Shot", { size: 0.25 }, main.scene);
+        this._instance.position.copyFrom(position);
+        if (playerShot) {
+            this.main.scene.onBeforeRenderObservable.add(this._playerShotUpdate);
+        }
+    }
+    get generator() {
+        return this.main.invaderGenerator;
+    }
+    dispose() {
+        this.main.scene.onBeforeRenderObservable.removeCallback(this._playerShotUpdate);
+        this._instance.dispose();
     }
 }

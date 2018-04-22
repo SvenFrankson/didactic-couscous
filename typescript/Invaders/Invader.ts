@@ -11,6 +11,9 @@ class Invader extends BABYLON.Mesh {
     public get spaceship(): Spaceship {
         return this.main.spaceship;
     }
+    public get generator(): InvaderGenerator {
+        return this.main.invaderGenerator;
+    }
 
     constructor(
         public main: Main
@@ -81,5 +84,14 @@ class Invader extends BABYLON.Mesh {
             newRotation
         );
         BABYLON.Quaternion.SlerpToRef(this.rotationQuaternion, newRotation, 0.1, this.rotationQuaternion);
+    }
+
+    public kill() {
+        this.getScene().onBeforeRenderObservable.removeCallback(this._update);
+        let index = this.generator.invaders.indexOf(this);
+        if (index !== -1) {
+            this.generator.invaders.splice(index, 1);
+        }
+        this.dispose();
     }
 }

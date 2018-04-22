@@ -35,6 +35,9 @@ class Spaceship extends BABYLON.Mesh {
     }
 
     private _update = () => {
+        if (this._coolDown > 0) {
+            this._coolDown--;
+        }
         let deltaTime = this.getEngine().getDeltaTime() / 1000;
         this.velocity.addInPlace(
             this.getDirection(BABYLON.Axis.Z).scale(this.thrust * deltaTime)
@@ -68,5 +71,22 @@ class Spaceship extends BABYLON.Mesh {
         this.velocity.subtractInPlace(dragX).subtractInPlace(dragZ).addInPlace(framer);
         this.position.addInPlace(this.velocity.scale(deltaTime));
         this.position.y = 0;
+    }
+    
+    private _coolDown: number = 0;
+    public shot(): void {
+        if (this._coolDown > 0) {
+            return;
+        }
+        new Shot(
+            true,
+            this.position,
+            this.getDirection(BABYLON.Axis.Z),
+            20,
+            1,
+            100,
+            this.main
+        );
+        this._coolDown = 30;
     }
 }
