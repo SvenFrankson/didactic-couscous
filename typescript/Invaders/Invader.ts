@@ -22,7 +22,7 @@ class Invader extends BABYLON.Mesh {
         super("Invader", main.scene);
         BABYLON.SceneLoader.ImportMesh(
 			"",
-			"./models/invader-1.babylon",
+			"./models/invader-" + Math.floor(Math.random() * 2 + 1) + ".babylon",
 			"",
             this.getScene(),
             (meshes) => {
