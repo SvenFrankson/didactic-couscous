@@ -80,6 +80,19 @@ class Spaceship extends BABYLON.Mesh {
             staminaIcon.width = "256px";
             staminaIcon.height = "128px";
             this.gui.addControl(staminaIcon);
+
+            this.staminaTextUI = new BABYLON.GUI.TextBlock("staminaTextUI", "LvL 1");
+            this.staminaTextUI.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            this.staminaTextUI.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+            this.staminaTextUI.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            this.staminaTextUI.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+            this.staminaTextUI.left = "-40 px";
+            this.staminaTextUI.top = (-128 - 64) + " px";
+            this.staminaTextUI.width = "128px";
+            this.staminaTextUI.height = "64px";
+            this.staminaTextUI.fontSize = "40px";
+            this.staminaTextUI.color = "white";
+            this.gui.addControl(this.staminaTextUI);
             
             let shieldIcon = new BABYLON.GUI.Image("ShieldIcon", "textures/shield_icon.png");
             shieldIcon.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
@@ -89,6 +102,19 @@ class Spaceship extends BABYLON.Mesh {
             shieldIcon.width = "256px";
             shieldIcon.height = "128px";
             this.gui.addControl(shieldIcon);
+
+            this.shieldTextUI = new BABYLON.GUI.TextBlock("shieldTextUI", "LvL 1");
+            this.shieldTextUI.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            this.shieldTextUI.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+            this.shieldTextUI.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            this.shieldTextUI.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+            this.shieldTextUI.left = "-40 px";
+            this.shieldTextUI.top = (- 64) + " px";
+            this.shieldTextUI.width = "128px";
+            this.shieldTextUI.height = "64px";
+            this.shieldTextUI.fontSize = "40px";
+            this.shieldTextUI.color = "white";
+            this.gui.addControl(this.shieldTextUI);
             
             let powerIcon = new BABYLON.GUI.Image("PowerIcon", "textures/power_icon.png");
             powerIcon.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
@@ -98,6 +124,19 @@ class Spaceship extends BABYLON.Mesh {
             powerIcon.width = "256px";
             powerIcon.height = "128px";
             this.gui.addControl(powerIcon);
+
+            this.powerTextUI = new BABYLON.GUI.TextBlock("powerTextUI", "LvL 1");
+            this.powerTextUI.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            this.powerTextUI.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+            this.powerTextUI.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            this.powerTextUI.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+            this.powerTextUI.left = "-40 px";
+            this.powerTextUI.top = (64) + " px";
+            this.powerTextUI.width = "128px";
+            this.powerTextUI.height = "64px";
+            this.powerTextUI.fontSize = "40px";
+            this.powerTextUI.color = "white";
+            this.gui.addControl(this.powerTextUI);
             
             let firerateIcon = new BABYLON.GUI.Image("firerateIcon", "textures/firerate_icon.png");
             firerateIcon.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
@@ -107,6 +146,19 @@ class Spaceship extends BABYLON.Mesh {
             firerateIcon.width = "256px";
             firerateIcon.height = "128px";
             this.gui.addControl(firerateIcon);
+
+            this.firerateTextUI = new BABYLON.GUI.TextBlock("firerateTextUI", "LvL 1");
+            this.firerateTextUI.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            this.firerateTextUI.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+            this.firerateTextUI.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            this.firerateTextUI.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+            this.firerateTextUI.left = "-40 px";
+            this.firerateTextUI.top = (64 + 128) + " px";
+            this.firerateTextUI.width = "128px";
+            this.firerateTextUI.height = "64px";
+            this.firerateTextUI.fontSize = "40px";
+            this.firerateTextUI.color = "white";
+            this.gui.addControl(this.firerateTextUI);
     }
 
     private _update = () => {
