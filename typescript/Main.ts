@@ -24,6 +24,7 @@ class Main {
 	
 	createScene(): void {
 		this.scene = new BABYLON.Scene(this.engine);
+		this.scene.clearColor.copyFromFloats(0, 0, 0, 0);
 		this.resize();
 
 		this.gui = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("GUI");
@@ -50,6 +51,7 @@ class Main {
 		this.ground.position.z = LetterGrid.GRID_LENGTH * LetterGrid.GRID_SIZE * 0.5;
 		this.ground.isVisible = false;
 
+		/*
 		let skybox: BABYLON.Mesh = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 100.0 }, this.scene);
 		skybox.infiniteDistance = true;
 		let skyboxMaterial: BABYLON.StandardMaterial = new BABYLON.StandardMaterial("skyBox", this.scene);
@@ -62,6 +64,7 @@ class Main {
 		skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
 		skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
 		skybox.material = skyboxMaterial;
+		*/
 
 		this.grid = new LetterGrid(this);
 

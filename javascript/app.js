@@ -319,6 +319,7 @@ class Main {
     }
     createScene() {
         this.scene = new BABYLON.Scene(this.engine);
+        this.scene.clearColor.copyFromFloats(0, 0, 0, 0);
         this.resize();
         this.gui = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("GUI");
         let light = new BABYLON.HemisphericLight("Light", (new BABYLON.Vector3(1, 3, 2)).normalize(), this.scene);
@@ -336,15 +337,20 @@ class Main {
         this.ground.position.y = -0.2;
         this.ground.position.z = LetterGrid.GRID_LENGTH * LetterGrid.GRID_SIZE * 0.5;
         this.ground.isVisible = false;
-        let skybox = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 100.0 }, this.scene);
+        /*
+        let skybox: BABYLON.Mesh = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 100.0 }, this.scene);
         skybox.infiniteDistance = true;
-        let skyboxMaterial = new BABYLON.StandardMaterial("skyBox", this.scene);
+        let skyboxMaterial: BABYLON.StandardMaterial = new BABYLON.StandardMaterial("skyBox", this.scene);
         skyboxMaterial.backFaceCulling = false;
-        skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("skyboxes/green-nebulae", this.scene, ["-px.png", "-py.png", "-pz.png", "-nx.png", "-ny.png", "-nz.png"]);
+        skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture(
+            "skyboxes/green-nebulae",
+            this.scene,
+            ["-px.png", "-py.png", "-pz.png", "-nx.png", "-ny.png", "-nz.png"]);
         skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
         skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
         skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
         skybox.material = skyboxMaterial;
+        */
         this.grid = new LetterGrid(this);
         this.spaceship = new Spaceship(this);
         this.spaceship.position.copyFromFloats(30, 0, 30);

@@ -8,6 +8,8 @@ html, body {
     overflow-x: hidden;
     margin: 0;
     padding: 0;
+    background-image: url("../textures/stars.jpg");
+    color: white;
 }
 
 #render-canvas {
