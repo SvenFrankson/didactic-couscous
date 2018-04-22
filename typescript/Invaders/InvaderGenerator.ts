@@ -3,9 +3,9 @@ class InvaderGenerator {
     public invaders: Invader[];
 
     public playerRange: number = 100;
-    public invaderRate: number = 5000;
+    public invaderRate: number = 10000;
 
-    public invaderLevelTime: number = 30;
+    public invaderLevelTime: number = 60;
     public invaderLevel: number = 1;
 
     public invaderLevelUpWarning: BABYLON.Mesh;

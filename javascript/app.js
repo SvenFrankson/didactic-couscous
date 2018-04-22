@@ -1248,8 +1248,8 @@ class InvaderGenerator {
     constructor(main) {
         this.main = main;
         this.playerRange = 100;
-        this.invaderRate = 5000;
-        this.invaderLevelTime = 30;
+        this.invaderRate = 10000;
+        this.invaderLevelTime = 60;
         this.invaderLevel = 1;
         this.timer = 0;
         this._updateInvadersLevel = () => {
