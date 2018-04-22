@@ -28,6 +28,7 @@ class FirerateBonus extends Bonus {
 
     public catch(): void {
         this.getScene().onBeforeRenderObservable.removeCallback(this._update);
+        this.main.spaceship.upFirerate();
         this.dispose();
     }
 }

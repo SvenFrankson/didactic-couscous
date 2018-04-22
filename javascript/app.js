@@ -384,6 +384,14 @@ class Spaceship extends BABYLON.Mesh {
         this.straff = 0;
         this.thrust = 0;
         this.velocity = BABYLON.Vector3.Zero();
+        this._staminaXp = 0;
+        this._shieldXp = 0;
+        this._powerXp = 0;
+        this._firerateXp = 0;
+        this.staminaLevel = 0;
+        this.shieldLevel = 0;
+        this.powerLevel = 0;
+        this.firerateLevel = 0;
         this._update = () => {
             if (this._coolDown > 0) {
                 this._coolDown--;
@@ -431,6 +439,38 @@ class Spaceship extends BABYLON.Mesh {
         this.getScene().onBeforeRenderObservable.add(this._update);
         this.letterStack = new LetterStack(this.main);
         this._createUI();
+    }
+    upStamina() {
+        this._staminaXp++;
+        if (this._staminaXp > this.staminaLevel) {
+            this.staminaLevel++;
+            this._staminaXp = 0;
+            this._updateUI();
+        }
+    }
+    upShield() {
+        this._shieldXp++;
+        if (this._shieldXp > this.shieldLevel) {
+            this.shieldLevel++;
+            this._shieldXp = 0;
+            this._updateUI();
+        }
+    }
+    upPower() {
+        this._powerXp++;
+        if (this._powerXp > this.powerLevel) {
+            this.powerLevel++;
+            this._powerXp = 0;
+            this._updateUI();
+        }
+    }
+    upFirerate() {
+        this._firerateXp++;
+        if (this._firerateXp > this.firerateLevel) {
+            this.firerateLevel++;
+            this._firerateXp = 0;
+            this._updateUI();
+        }
     }
     get grid() {
         return this.main.grid;
@@ -595,6 +635,13 @@ class Spaceship extends BABYLON.Mesh {
         this.firerateTextUI.fontSize = "40px";
         this.firerateTextUI.color = "white";
         this.gui.addControl(this.firerateTextUI);
+        this._updateUI();
+    }
+    _updateUI() {
+        this.staminaTextUI.text = "lvl " + this.staminaLevel;
+        this.shieldTextUI.text = "lvl " + this.shieldLevel;
+        this.powerTextUI.text = "lvl " + this.powerLevel;
+        this.firerateTextUI.text = "lvl " + this.firerateLevel;
     }
     shoot() {
         if (this._coolDown > 0) {
@@ -873,6 +920,7 @@ class FirerateBonus extends Bonus {
     }
     catch() {
         this.getScene().onBeforeRenderObservable.removeCallback(this._update);
+        this.main.spaceship.upFirerate();
         this.dispose();
     }
 }
@@ -934,6 +982,7 @@ class PowerBonus extends Bonus {
     }
     catch() {
         this.getScene().onBeforeRenderObservable.removeCallback(this._update);
+        this.main.spaceship.upPower();
         this.dispose();
     }
 }
@@ -958,6 +1007,7 @@ class ShieldBonus extends Bonus {
     }
     catch() {
         this.getScene().onBeforeRenderObservable.removeCallback(this._update);
+        this.main.spaceship.upShield();
         this.dispose();
     }
 }
@@ -982,6 +1032,7 @@ class StaminaBonus extends Bonus {
     }
     catch() {
         this.getScene().onBeforeRenderObservable.removeCallback(this._update);
+        this.main.spaceship.upStamina();
         this.dispose();
     }
 }

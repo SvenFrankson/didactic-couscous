@@ -28,6 +28,7 @@ class StaminaBonus extends Bonus {
 
     public catch(): void {
         this.getScene().onBeforeRenderObservable.removeCallback(this._update);
+        this.main.spaceship.upStamina();
         this.dispose();
     }
 }
