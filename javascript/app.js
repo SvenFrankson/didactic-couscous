@@ -193,17 +193,23 @@ class LetterGrid {
         }
     }
     _acceptPendingCells() {
-        console.log("Accept pending cells");
+        let counter = 0;
+        let l = Math.floor(this.pendingCells.length / 2);
         this.pendingCells.forEach((c) => {
             c.setCorrectState();
-            if (Math.random() > 0) {
-                this.main.bonusGenerator.popBonus(c.position);
+            for (let i = 0; i < l; i++) {
+                let pos = c.position.clone();
+                pos.x += Math.random() * 4 - 2;
+                pos.z += Math.random() * 4 - 2;
+                setTimeout(() => {
+                    this.main.bonusGenerator.popBonus(pos);
+                }, counter * 250);
+                counter++;
             }
         });
         this.pendingCells = [];
     }
     _rejectPendingCells() {
-        console.log("Reject pending cells");
         this.pendingCells.forEach((c) => {
             c.setWrongState();
             setTimeout(() => {
@@ -391,7 +397,9 @@ class Spaceship extends BABYLON.Mesh {
         this.main = main;
         this.straff = 0;
         this.thrust = 0;
-        this.hitPoints = 100;
+        this._hitPoints = 100;
+        this.regenCooldown = 60;
+        this.regenDelay = 180;
         this.velocity = BABYLON.Vector3.Zero();
         this._staminaXp = 0;
         this._shieldXp = 0;
@@ -408,6 +416,15 @@ class Spaceship extends BABYLON.Mesh {
         this._update = () => {
             if (this._coolDown > 0) {
                 this._coolDown--;
+            }
+            this._regenDelayTimer--;
+            if (this._regenDelayTimer <= 0) {
+                this._regenTimer--;
+                if (this._regenTimer <= 0) {
+                    this.hitPoints += 1;
+                    this._regenTimer = this.regenCooldown;
+                    this._updateUI();
+                }
             }
             let deltaTime = this.getEngine().getDeltaTime() / 1000;
             if (Main.MOUSE_ONLY_CONTROL || Main.instance) {
@@ -447,6 +464,8 @@ class Spaceship extends BABYLON.Mesh {
             this.position.y = 0;
         };
         this._coolDown = 0;
+        this._regenTimer = 0;
+        this._regenDelayTimer = 0;
         BABYLON.SceneLoader.ImportMesh("", "./models/spaceship.babylon", "", this.getScene(), (meshes) => {
             if (meshes[0]) {
                 meshes[0].parent = this;
@@ -459,10 +478,20 @@ class Spaceship extends BABYLON.Mesh {
         this.letterStack = new LetterStack(this.main);
         this._createUI();
     }
+    get hitPoints() {
+        return this._hitPoints;
+    }
+    set hitPoints(v) {
+        this._hitPoints = Math.round(v);
+        if (this._hitPoints > this.stamina) {
+            this._hitPoints = Math.round(this.stamina);
+        }
+    }
     upStamina() {
         this._staminaXp++;
         if (this._staminaXp > this.staminaLevel) {
             this.staminaLevel++;
+            this.regenCooldown--;
             this.staminaCoef = Math.pow(1.1, this.staminaLevel);
             this._staminaXp = 0;
             this._updateUI();
@@ -687,7 +716,8 @@ class Spaceship extends BABYLON.Mesh {
         this._coolDown = Math.round(60 / this.firerate);
     }
     wound(damage) {
-        console.log("wound");
+        this._regenDelayTimer = this.regenDelay;
+        this._regenTimer = this.regenCooldown;
         let r = Math.random();
         if (r < this.shield / 100) {
             return;
@@ -883,8 +913,31 @@ class Bonus extends BABYLON.Mesh {
         super(name, main.scene);
         this.main = main;
         this.loaded = false;
+        this._k = 0;
+        this._pop = () => {
+            this._k++;
+            let size = Bonus.easeOutElastic(BABYLON.Scalar.Clamp(this._k / 60, 0, 1));
+            this.scaling.copyFromFloats(size, size, size);
+            if (this._k >= 60) {
+                this.scaling.copyFromFloats(1, 1, 1);
+                this.main.scene.onBeforeRenderObservable.removeCallback(this._pop);
+            }
+        };
+        this.position.y = 1;
+    }
+    static easeOutElastic(t) {
+        var p = 0.3;
+        return Math.pow(2, -10 * t) * Math.sin((t - p / 4) * (2 * Math.PI) / p) + 1;
+    }
+    disposeBonus() {
+        this.main.scene.onBeforeRenderObservable.removeCallback(this._pop);
+        this.dispose();
     }
     catch() {
+    }
+    pop() {
+        this.scaling.copyFromFloats(0, 0, 0);
+        this.main.scene.onBeforeRenderObservable.add(this._pop);
     }
 }
 class BonusGenerator {
@@ -948,7 +1001,8 @@ class BonusGenerator {
         }
         this.bonuses.push(bonus);
         if (pos) {
-            bonus.position.copyFrom(pos);
+            bonus.position.x = pos.x;
+            bonus.position.z = pos.z;
         }
         else {
             let minX = Math.max(0, this.spaceship.position.x - this.playerRange);
@@ -993,14 +1047,14 @@ class FirerateBonus extends Bonus {
                 }
             });
             this.loaded = true;
+            this.pop();
         });
-        this.position.y = 1.5;
         this.getScene().onBeforeRenderObservable.add(this._update);
     }
     catch() {
         this.getScene().onBeforeRenderObservable.removeCallback(this._update);
         this.main.spaceship.upFirerate();
-        this.dispose();
+        this.disposeBonus();
     }
 }
 class Letter extends Bonus {
@@ -1067,14 +1121,14 @@ class PowerBonus extends Bonus {
                 }
             });
             this.loaded = true;
+            this.pop();
         });
-        this.position.y = 1.5;
         this.getScene().onBeforeRenderObservable.add(this._update);
     }
     catch() {
         this.getScene().onBeforeRenderObservable.removeCallback(this._update);
         this.main.spaceship.upPower();
-        this.dispose();
+        this.disposeBonus();
     }
 }
 class ShieldBonus extends Bonus {
@@ -1104,14 +1158,14 @@ class ShieldBonus extends Bonus {
                 }
             });
             this.loaded = true;
+            this.pop();
         });
-        this.position.y = 1.5;
         this.getScene().onBeforeRenderObservable.add(this._update);
     }
     catch() {
         this.getScene().onBeforeRenderObservable.removeCallback(this._update);
         this.main.spaceship.upShield();
-        this.dispose();
+        this.disposeBonus();
     }
 }
 class StaminaBonus extends Bonus {
@@ -1141,14 +1195,14 @@ class StaminaBonus extends Bonus {
                 }
             });
             this.loaded = true;
+            this.pop();
         });
-        this.position.y = 1.5;
         this.getScene().onBeforeRenderObservable.add(this._update);
     }
     catch() {
         this.getScene().onBeforeRenderObservable.removeCallback(this._update);
         this.main.spaceship.upStamina();
-        this.dispose();
+        this.disposeBonus();
     }
 }
 class Invader extends BABYLON.Mesh {

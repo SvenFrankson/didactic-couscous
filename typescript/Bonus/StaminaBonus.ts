@@ -27,9 +27,9 @@ class StaminaBonus extends Bonus {
                     }
                 );
                 this.loaded = true;
+                this.pop();
             }
         );
-        this.position.y = 1.5;
         this.getScene().onBeforeRenderObservable.add(this._update);
     }
 
@@ -43,6 +43,6 @@ class StaminaBonus extends Bonus {
     public catch(): void {
         this.getScene().onBeforeRenderObservable.removeCallback(this._update);
         this.main.spaceship.upStamina();
-        this.dispose();
+        this.disposeBonus();
     }
 }

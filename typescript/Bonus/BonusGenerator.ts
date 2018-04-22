@@ -53,7 +53,8 @@ class BonusGenerator {
         }
         this.bonuses.push(bonus);
         if (pos) {
-            bonus.position.copyFrom(pos);
+            bonus.position.x = pos.x;
+            bonus.position.z = pos.z;
         } else {
             let minX = Math.max(0, this.spaceship.position.x - this.playerRange);
             let maxX = Math.min(LetterGrid.GRID_DISTANCE, this.spaceship.position.x + this.playerRange);

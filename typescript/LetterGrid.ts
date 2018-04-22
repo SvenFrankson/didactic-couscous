@@ -256,12 +256,22 @@ class LetterGrid {
     }
 
     private _acceptPendingCells(): void {
-        console.log("Accept pending cells");
+        let counter = 0;
+        let l = Math.floor(this.pendingCells.length / 2);
         this.pendingCells.forEach(
             (c) => {
                 c.setCorrectState();
-                if (Math.random() > 0) {
-                    this.main.bonusGenerator.popBonus(c.position);
+                for (let i = 0; i < l; i++) {
+                    let pos = c.position.clone();
+                    pos.x += Math.random() * 4 - 2;
+                    pos.z += Math.random() * 4 - 2;
+                    setTimeout(
+                        () => {
+                            this.main.bonusGenerator.popBonus(pos);
+                        },
+                        counter * 250
+                    );
+                    counter++;
                 }
             }
         )
@@ -269,7 +279,6 @@ class LetterGrid {
     }
 
     private _rejectPendingCells(): void {
-        console.log("Reject pending cells");
         this.pendingCells.forEach(
             (c) => {
                 c.setWrongState();

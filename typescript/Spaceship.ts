@@ -3,12 +3,23 @@ class Spaceship extends BABYLON.Mesh {
     private _instance: BABYLON.Mesh;
     public straff: number = 0;
     public thrust: number = 0;
-    public hitPoints: number = 100;
+    public _hitPoints: number = 100;
+    public get hitPoints(): number {
+        return this._hitPoints;
+    }
+    public set hitPoints(v: number) {
+        this._hitPoints = Math.round(v);
+        if (this._hitPoints > this.stamina) {
+            this._hitPoints = Math.round(this.stamina);
+        }
+    }
+    public regenCooldown: number = 60;
+    public regenDelay: number = 180;
     public mouseInput: SpaceshipMouseInput;
     private _keyboardInput: SpaceshipKeyboardInput;
     public letterStack: LetterStack;
-
     public velocity: BABYLON.Vector3 = BABYLON.Vector3.Zero();
+
     public scoreUI: BABYLON.GUI.TextBlock;
     public hpUI: BABYLON.GUI.TextBlock;
     public staminaTextUI: BABYLON.GUI.TextBlock;
@@ -21,6 +32,7 @@ class Spaceship extends BABYLON.Mesh {
         this._staminaXp++;
         if (this._staminaXp > this.staminaLevel) {
             this.staminaLevel++;
+            this.regenCooldown--;
             this.staminaCoef = Math.pow(1.1, this.staminaLevel);
             this._staminaXp = 0;
             this._updateUI()
@@ -297,6 +309,15 @@ class Spaceship extends BABYLON.Mesh {
         if (this._coolDown > 0) {
             this._coolDown--;
         }
+        this._regenDelayTimer--;
+        if (this._regenDelayTimer <= 0) {
+            this._regenTimer--;
+            if (this._regenTimer <= 0) {
+                this.hitPoints += 1;
+                this._regenTimer = this.regenCooldown;
+                this._updateUI();
+            }
+        }
         let deltaTime = this.getEngine().getDeltaTime() / 1000;
         if (Main.MOUSE_ONLY_CONTROL || Main.instance) {
             this.velocity.addInPlace(
@@ -358,8 +379,11 @@ class Spaceship extends BABYLON.Mesh {
         this._coolDown = Math.round(60 / this.firerate);
     }
 
+    private _regenTimer: number = 0;
+    private _regenDelayTimer: number = 0;
     public wound(damage: number): void {
-        console.log("wound");
+        this._regenDelayTimer = this.regenDelay;
+        this._regenTimer = this.regenCooldown;
         let r = Math.random();
         if (r < this.shield / 100) {
             return;
