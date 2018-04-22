@@ -10,6 +10,7 @@ class PowerBonus extends Bonus {
             (meshes) => {
                 if (meshes[0]) {
                     meshes[0].parent = this;
+                    this.loaded = true;
                 }
             }
         );

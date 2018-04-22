@@ -10,6 +10,7 @@ class Letter extends Bonus {
             (meshes) => {
                 if (meshes[0]) {
                     meshes[0].parent = this;
+                    this.loaded = true;
                     let materials = meshes[0].material;
                     if (materials instanceof BABYLON.MultiMaterial) {
                         materials.subMaterials.forEach(

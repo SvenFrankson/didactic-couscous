@@ -77,10 +77,12 @@ class BonusGenerator {
     public _checkIntersection = () => {
         for (let i = 0; i < this.bonuses.length; i++) {
             let b = this.bonuses[i];
-            if (BABYLON.Vector3.DistanceSquared(b.position, this.spaceship.position) < 9) {
-                this.bonuses.splice(i, 1);
-                b.catch();
-                return;
+            if (b.loaded) {
+                if (BABYLON.Vector3.DistanceSquared(b.position, this.spaceship.position) < 9) {
+                    this.bonuses.splice(i, 1);
+                    b.catch();
+                    return;
+                }
             }
         }
     }

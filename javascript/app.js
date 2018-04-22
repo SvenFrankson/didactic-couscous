@@ -649,6 +649,7 @@ class Bonus extends BABYLON.Mesh {
     constructor(name, main) {
         super(name, main.scene);
         this.main = main;
+        this.loaded = false;
     }
     catch() {
     }
@@ -661,10 +662,12 @@ class BonusGenerator {
         this._checkIntersection = () => {
             for (let i = 0; i < this.bonuses.length; i++) {
                 let b = this.bonuses[i];
-                if (BABYLON.Vector3.DistanceSquared(b.position, this.spaceship.position) < 9) {
-                    this.bonuses.splice(i, 1);
-                    b.catch();
-                    return;
+                if (b.loaded) {
+                    if (BABYLON.Vector3.DistanceSquared(b.position, this.spaceship.position) < 9) {
+                        this.bonuses.splice(i, 1);
+                        b.catch();
+                        return;
+                    }
                 }
             }
         };
@@ -742,6 +745,7 @@ class FirerateBonus extends Bonus {
         BABYLON.SceneLoader.ImportMesh("", "./models/firerate_bonus.babylon", "", this.getScene(), (meshes) => {
             if (meshes[0]) {
                 meshes[0].parent = this;
+                this.loaded = true;
             }
         });
         this.position.y = 1;
@@ -765,6 +769,7 @@ class Letter extends Bonus {
         BABYLON.SceneLoader.ImportMesh("", "./models/letter_bonus.babylon", "", this.getScene(), (meshes) => {
             if (meshes[0]) {
                 meshes[0].parent = this;
+                this.loaded = true;
                 let materials = meshes[0].material;
                 if (materials instanceof BABYLON.MultiMaterial) {
                     materials.subMaterials.forEach((material) => {
@@ -801,6 +806,7 @@ class PowerBonus extends Bonus {
         BABYLON.SceneLoader.ImportMesh("", "./models/power_bonus.babylon", "", this.getScene(), (meshes) => {
             if (meshes[0]) {
                 meshes[0].parent = this;
+                this.loaded = true;
             }
         });
         this.position.y = 1;
@@ -824,6 +830,7 @@ class ShieldBonus extends Bonus {
         BABYLON.SceneLoader.ImportMesh("", "./models/shield_bonus.babylon", "", this.getScene(), (meshes) => {
             if (meshes[0]) {
                 meshes[0].parent = this;
+                this.loaded = true;
             }
         });
         this.position.y = 1;
@@ -847,6 +854,7 @@ class StaminaBonus extends Bonus {
         BABYLON.SceneLoader.ImportMesh("", "./models/stamina_bonus.babylon", "", this.getScene(), (meshes) => {
             if (meshes[0]) {
                 meshes[0].parent = this;
+                this.loaded = true;
             }
         });
         this.position.y = 1;
