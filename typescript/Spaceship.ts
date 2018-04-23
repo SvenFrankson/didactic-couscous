@@ -357,7 +357,7 @@ class Spaceship extends BABYLON.Mesh {
             }
         }
         let deltaTime = this.getEngine().getDeltaTime() / 1000;
-        if (Main.MOUSE_ONLY_CONTROL || Main.instance) {
+        if (Main.MOUSE_ONLY_CONTROL || Main.KEYBOARD_LOCAL_CONTROL) {
             this.velocity.addInPlace(
                 this.getDirection(BABYLON.Axis.Z).scale(this.thrust * deltaTime)
             );
@@ -372,11 +372,11 @@ class Spaceship extends BABYLON.Mesh {
         let dragX = this.getDirection(BABYLON.Axis.X);
         let dragXComp = BABYLON.Vector3.Dot(this.velocity, dragX);
         dragXComp *= Math.abs(dragXComp);
-        dragX.scaleInPlace(dragXComp * deltaTime * 0.2);
+        dragX.scaleInPlace(dragXComp * deltaTime * 0.1);
         let dragZ = this.getDirection(BABYLON.Axis.Z);
         let dragZComp = BABYLON.Vector3.Dot(this.velocity, dragZ);
         if (dragZComp < 0) {
-            dragZComp *= 10;
+            dragZComp *= 5;
         }
         dragZComp *= Math.abs(dragZComp);
         dragZ.scaleInPlace(dragZComp * deltaTime * 0.02);

@@ -2,7 +2,7 @@ class Main {
 
 	public static LANGUAGE: string = "en";
 	public static MOUSE_ONLY_CONTROL: boolean = false;
-	public static KEYBOARD_LOCAL_CONTROL: boolean = true;
+	public static KEYBOARD_LOCAL_CONTROL: boolean = false;
 
 	public static instance: Main;
 	public canvas: HTMLCanvasElement;
@@ -172,6 +172,22 @@ window.addEventListener("DOMContentLoaded", () => {
 		$(".level").css("background", "none");
 		$("#hard").css("color", "black");
 		$("#hard").css("background", "white");
+	});
+	$("#control-world").on("click", () => {
+		Main.KEYBOARD_LOCAL_CONTROL = false;
+		$("#control-mask").css("left", "192px");
+		$("#control-world").css("z-index", "12");
+		$("#control-world").css("border", "solid 2px white");
+		$("#control-local").css("z-index", "10");
+		$("#control-local").css("border", "");
+	});
+	$("#control-local").on("click", () => {
+		Main.KEYBOARD_LOCAL_CONTROL = true;
+		$("#control-mask").css("left", "64px");
+		$("#control-world").css("z-index", "10");
+		$("#control-world").css("border", "");
+		$("#control-local").css("z-index", "12");
+		$("#control-local").css("border", "solid 2px white");
 	});
 	$("#stfu").on("click", () => {
 		Main.musicSound.pause();

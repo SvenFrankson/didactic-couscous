@@ -21,16 +21,16 @@ class SpaceshipKeyboardInput {
                 if (e.keyCode === 32) {
                     this.spacekeyDown = false;
                 }
-                if (e.keyCode === 37) {
+                if (e.keyCode === 37 || e.key === "a") {
                     this.leftKeyDown = false;
                 }
-                if (e.keyCode === 38) {
+                if (e.keyCode === 38 || e.key === "w") {
                     this.upKeyDown = false;
                 }
-                if (e.keyCode === 39) {
+                if (e.keyCode === 39 || e.key === "d") {
                     this.rightKeyDown = false;
                 }
-                if (e.keyCode === 40) {
+                if (e.keyCode === 40 || e.key === "s") {
                     this.downKeyDown = false;
                 }
             }
@@ -41,16 +41,16 @@ class SpaceshipKeyboardInput {
                 if (e.keyCode === 32) {
                     this.spacekeyDown = true;
                 }
-                if (e.keyCode === 37) {
+                if (e.keyCode === 37 || e.key === "a") {
                     this.leftKeyDown = true;
                 }
-                if (e.keyCode === 38) {
+                if (e.keyCode === 38 || e.key === "w") {
                     this.upKeyDown = true;
                 }
-                if (e.keyCode === 39) {
+                if (e.keyCode === 39 || e.key === "d") {
                     this.rightKeyDown = true;
                 }
-                if (e.keyCode === 40) {
+                if (e.keyCode === 40 || e.key === "s") {
                     this.downKeyDown = true;
                 }
             }
