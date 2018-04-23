@@ -38,6 +38,7 @@ class Main {
 		this.resize();
 
 		this.gui = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("GUI");
+		this.gui.idealHeight = 1217;
 
 		let light = new BABYLON.HemisphericLight("Light", (new BABYLON.Vector3(1, 3, 2)).normalize(), this.scene);
 		light.groundColor.copyFromFloats(0.5, 0.5, 0.5);
