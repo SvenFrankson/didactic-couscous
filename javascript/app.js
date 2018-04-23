@@ -197,6 +197,8 @@ class LetterGrid {
         this.main.goodSound.play();
         let counter = 0;
         let l = Math.floor(this.pendingCells.length / 2);
+        this.main.spaceship.score += l * l * 10;
+        this.main.spaceship.words++;
         this.pendingCells.forEach((c) => {
             c.setCorrectState();
             for (let i = 0; i < l; i++) {
@@ -290,6 +292,24 @@ class LetterStack {
             indexBlock.color = "white";
             this.gui.addControl(indexBlock);
         }
+        let langBlock = new BABYLON.GUI.TextBlock("langBlock", "(English Dictionnary)");
+        langBlock.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+        langBlock.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+        langBlock.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+        langBlock.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+        langBlock.left = (20 + (150 + 10) * 7) + " px";
+        langBlock.top = "80 px";
+        langBlock.width = "400px";
+        langBlock.height = "150px";
+        langBlock.fontSize = "25px";
+        langBlock.color = "white";
+        this.gui.addControl(langBlock);
+        if (Main.LANGUAGE === "en") {
+            langBlock.text = "Words are validated against an\n(English Dictionnary)";
+        }
+        else if (Main.LANGUAGE === "fr") {
+            langBlock.text = "Words are validated against a\n(French Dictionnary)";
+        }
     }
     _updateUI() {
         for (let i = 0; i < LetterStack.MAX_LENGTH; i++) {
@@ -380,6 +400,20 @@ class Main {
         game.createScene();
         game.animate();
     }
+    static GameOver() {
+        Main.instance.invaderGenerator.invaders.forEach((i) => {
+            i.kill();
+        });
+        Main.instance.gui.dispose();
+        Main.instance.bonusGenerator.stop();
+        Main.instance.invaderGenerator.stop();
+        $("#score").text("SCORE " + Main.instance.spaceship.score);
+        $("#kills").text("KILLS " + Main.instance.spaceship.kills);
+        $("#words").text("WORDS " + Main.instance.spaceship.words);
+        $("#experience").text("EXPERIENCE " + Main.instance.spaceship.xp);
+        $(".main-menu").hide();
+        $(".game-over").show();
+    }
 }
 Main.LANGUAGE = "en";
 Main.MOUSE_ONLY_CONTROL = false;
@@ -393,6 +427,30 @@ window.addEventListener("DOMContentLoaded", () => {
         Main.LANGUAGE = "en";
         Main.Play();
     });
+    $("#easy").on("click", () => {
+        InvaderGenerator.invaderLevelTime = 70;
+        InvaderGenerator.invaderRate = 10000;
+        $(".level").css("color", "grey");
+        $(".level").css("background", "none");
+        $("#easy").css("color", "black");
+        $("#easy").css("background", "white");
+    });
+    $("#medium").on("click", () => {
+        InvaderGenerator.invaderLevelTime = 60;
+        InvaderGenerator.invaderRate = 8000;
+        $(".level").css("color", "grey");
+        $(".level").css("background", "none");
+        $("#medium").css("color", "black");
+        $("#medium").css("background", "white");
+    });
+    $("#hard").on("click", () => {
+        InvaderGenerator.invaderLevelTime = 50;
+        InvaderGenerator.invaderRate = 6000;
+        $(".level").css("color", "grey");
+        $(".level").css("background", "none");
+        $("#hard").css("color", "black");
+        $("#hard").css("background", "white");
+    });
 });
 class Spaceship extends BABYLON.Mesh {
     constructor(main) {
@@ -401,6 +459,10 @@ class Spaceship extends BABYLON.Mesh {
         this.straff = 0;
         this.thrust = 0;
         this._hitPoints = 100;
+        this._score = 0;
+        this.kills = 0;
+        this.xp = 0;
+        this.words = 0;
         this.regenCooldown = 60;
         this.regenDelay = 180;
         this.velocity = BABYLON.Vector3.Zero();
@@ -490,10 +552,19 @@ class Spaceship extends BABYLON.Mesh {
             this._hitPoints = Math.round(this.stamina);
         }
     }
+    get score() {
+        return this._score;
+    }
+    set score(v) {
+        this._score = Math.round(v);
+        this._updateUI();
+    }
     upStamina() {
+        this.xp++;
         this._staminaXp++;
         this.hitPoints++;
         if (this._staminaXp > this.staminaLevel) {
+            this.score += this.staminaLevel * 5;
             this.main.upgradeSound.play();
             this.staminaLevel++;
             this.regenCooldown--;
@@ -503,9 +574,11 @@ class Spaceship extends BABYLON.Mesh {
         }
     }
     upShield() {
+        this.xp++;
         this._shieldXp++;
         this.hitPoints++;
         if (this._shieldXp > this.shieldLevel) {
+            this.score += this.shieldLevel * 5;
             this.main.upgradeSound.play();
             this.shieldLevel++;
             this.shieldCoef = Math.pow(1.1, this.shieldLevel);
@@ -514,9 +587,11 @@ class Spaceship extends BABYLON.Mesh {
         }
     }
     upPower() {
+        this.xp++;
         this._powerXp++;
         this.hitPoints++;
         if (this._powerXp > this.powerLevel) {
+            this.score += this.powerLevel * 5;
             this.main.upgradeSound.play();
             this.powerLevel++;
             this.powerCoef = Math.pow(1.1, this.powerLevel);
@@ -525,9 +600,11 @@ class Spaceship extends BABYLON.Mesh {
         }
     }
     upFirerate() {
+        this.xp++;
         this._firerateXp++;
         this.hitPoints++;
         if (this._firerateXp > this.firerateLevel) {
+            this.score += this.firerateLevel * 5;
             this.main.upgradeSound.play();
             this.firerateLevel++;
             this.firerateCoef = Math.pow(1.1, this.firerateLevel);
@@ -562,7 +639,7 @@ class Spaceship extends BABYLON.Mesh {
         leftSideUI.width = "475px";
         leftSideUI.height = "950px";
         this.gui.addControl(leftSideUI);
-        this.scoreUI = new BABYLON.GUI.TextBlock("ScoreBlock", "SCORE 0");
+        this.scoreUI = new BABYLON.GUI.TextBlock("ScoreBlock", "SCORE " + this.score);
         this.scoreUI.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
         this.scoreUI.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
         this.scoreUI.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -722,6 +799,7 @@ class Spaceship extends BABYLON.Mesh {
     }
     _updateUI() {
         this.hpUI.text = "HP " + this.hitPoints + " / " + this.stamina;
+        this.scoreUI.text = "SCORE " + this.score;
         this.staminaTextUI.text = "lvl " + this.staminaLevel;
         this.shieldTextUI.text = "lvl " + this.shieldLevel;
         this.powerTextUI.text = "lvl " + this.powerLevel;
@@ -742,6 +820,14 @@ class Spaceship extends BABYLON.Mesh {
             return;
         }
         this.hitPoints -= damage;
+        if (this.hitPoints <= 0) {
+            setTimeout(() => {
+                this.getChildMeshes().forEach((m) => {
+                    m.isVisible = false;
+                });
+                Main.GameOver();
+            }, 250);
+        }
         this._updateUI();
     }
 }
@@ -1020,6 +1106,9 @@ class BonusGenerator {
     start() {
         this._popLetterLoop();
     }
+    stop() {
+        clearTimeout(this._popLetterHandle);
+    }
     popLetter(pos) {
         let letter = new Letter(this.main);
         this.bonuses.push(letter);
@@ -1066,7 +1155,7 @@ class BonusGenerator {
     }
     _popLetterLoop() {
         this.popLetter();
-        setTimeout(() => {
+        this._popLetterHandle = setTimeout(() => {
             this._popLetterLoop();
         }, Math.random() * this.letterRate * 1.5);
     }
@@ -1382,6 +1471,8 @@ class Invader extends BABYLON.Mesh {
     wound(damage) {
         this._hitPoints -= damage;
         if (this._hitPoints < 0) {
+            this.main.spaceship.score += 30;
+            this.main.spaceship.kills++;
             this.kill();
         }
     }
@@ -1401,13 +1492,11 @@ class InvaderGenerator {
     constructor(main) {
         this.main = main;
         this.playerRange = 100;
-        this.invaderRate = 10000;
-        this.invaderLevelTime = 60;
         this.invaderLevel = 1;
         this.timer = 0;
         this._updateInvadersLevel = () => {
             this.timer += this.main.engine.getDeltaTime() / 1000;
-            if (this.timer > this.invaderLevelTime) {
+            if (this.timer > InvaderGenerator.invaderLevelTime) {
                 this.timer = 0;
                 if (Math.random() > 0.5) {
                     this.invaderLevelUpWarningText.text = "INVADERS ARE GETTING STRONGER !";
@@ -1415,7 +1504,7 @@ class InvaderGenerator {
                 }
                 else {
                     this.invaderLevelUpWarningText.text = "INVADERS ARE CALLING BACKUPS !";
-                    this.invaderRate /= 1.1;
+                    InvaderGenerator.invaderRate /= 1.1;
                 }
                 this.invaderLevelUpWarning.position.copyFrom(this.main.spaceship.position);
                 this.invaderLevelUpWarning.position.y = -1;
@@ -1458,6 +1547,9 @@ class InvaderGenerator {
         this._popInvader();
         this.main.scene.onBeforeRenderObservable.add(this._updateInvadersLevel);
     }
+    stop() {
+        clearTimeout(this._popInvaderHandle);
+    }
     _popInvader() {
         let invader = new Invader(this.main);
         this.invaders.push(invader);
@@ -1467,11 +1559,13 @@ class InvaderGenerator {
         let maxZ = Math.min(LetterGrid.GRID_DISTANCE, this.spaceship.position.z + this.playerRange);
         invader.position.x = Math.random() * (maxX - minX) + minX;
         invader.position.z = Math.random() * (maxZ - minZ) + minZ;
-        setTimeout(() => {
+        this._popInvaderHandle = setTimeout(() => {
             this._popInvader();
-        }, Math.random() * this.invaderRate * 1.5);
+        }, Math.random() * InvaderGenerator.invaderRate * 1.5);
     }
 }
+InvaderGenerator.invaderRate = 8000;
+InvaderGenerator.invaderLevelTime = 60;
 class Shot {
     constructor(playerShot, position, rotationQuaternion, speed, damage, range, main) {
         this.playerShot = playerShot;

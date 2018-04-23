@@ -46,6 +46,56 @@ html, body {
     font-family: "Komikax";
 }
 
+#game-over {
+    position: absolute;
+    top: 10%;
+    width: 100%;
+    text-align: center;
+    font-size: 80px;
+    font-family: "Komikax";
+}
+
+.game-over {
+    z-index: 3;
+}
+
+.score {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    font-size: 40px;
+    font-family: "Komikax";
+}
+
+#replay {
+    border-bottom: solid 4px white;
+}
+
+#score {
+    top: 30%;
+}
+
+#kills {
+    top: 35%;
+}
+
+#words {
+    top: 40%;
+}
+
+#experience {
+    top: 45%;
+}
+
+#thank {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    font-size: 30px;
+    font-family: "Helvetica";
+    top: 55%;
+}
+
 .play-button {
     position: absolute;
     top: 20%;
@@ -54,6 +104,32 @@ html, body {
     font-size: 80px;
     font-family: "Komikax";
     border: solid 2px white;
+}
+
+.level {
+    position: absolute;
+    top: 35%;
+    width: 10%;
+    text-align: center;
+    font-size: 40px;
+    font-family: "Komikax";
+    border: solid 2px white;
+}
+
+#easy {
+    left: 35%;
+    color: grey;
+}
+
+#medium {
+    left: 45%;
+    background: white;
+    color: black;
+}
+
+#hard {
+    left: 55%;
+    color: grey;
 }
 
 #play-en {
@@ -77,7 +153,7 @@ html, body {
 
 #background {
     position: absolute;
-    top: 40%;
+    top: 45%;
     left: 35%;
     width: 30%;
     text-align: center;

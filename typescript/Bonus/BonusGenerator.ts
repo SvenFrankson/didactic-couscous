@@ -20,6 +20,10 @@ class BonusGenerator {
     public start(): void {
         this._popLetterLoop();
     }
+    
+    public stop(): void {
+        clearTimeout(this._popLetterHandle);
+    }
 
     public popLetter(pos?: BABYLON.Vector3): void {
         let letter = new Letter(this.main);
@@ -65,9 +69,10 @@ class BonusGenerator {
         }
     }
 
+    private _popLetterHandle: number;
     private _popLetterLoop(): void {
         this.popLetter();
-        setTimeout(
+        this._popLetterHandle = setTimeout(
             () => {
                 this._popLetterLoop();
             },

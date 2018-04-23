@@ -75,6 +75,26 @@ class LetterStack {
             indexBlock.color = "white";
             this.gui.addControl(indexBlock);
         }
+
+        let langBlock = new BABYLON.GUI.TextBlock("langBlock", "(English Dictionnary)");
+        langBlock.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+        langBlock.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+        langBlock.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+        langBlock.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+        langBlock.left = (20 + (150 + 10) * 7) + " px";
+        langBlock.top = "80 px";
+        langBlock.width = "400px";
+        langBlock.height = "150px";
+        langBlock.fontSize = "25px";
+        langBlock.color = "white";
+        this.gui.addControl(langBlock);
+
+        if (Main.LANGUAGE === "en") {
+            langBlock.text = "Words are validated against an\n(English Dictionnary)"
+        }
+        else if (Main.LANGUAGE === "fr") {
+            langBlock.text = "Words are validated against a\n(French Dictionnary)"
+        }
     }
 
     private _updateUI(): void {

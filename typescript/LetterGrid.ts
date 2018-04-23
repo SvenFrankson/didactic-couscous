@@ -260,6 +260,8 @@ class LetterGrid {
         this.main.goodSound.play();
         let counter = 0;
         let l = Math.floor(this.pendingCells.length / 2);
+        this.main.spaceship.score += l * l * 10;
+        this.main.spaceship.words ++;
         this.pendingCells.forEach(
             (c) => {
                 c.setCorrectState();

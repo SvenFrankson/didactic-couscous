@@ -102,6 +102,23 @@ class Main {
 		game.createScene();
 		game.animate();
 	}
+
+	public static GameOver(): void {
+		Main.instance.invaderGenerator.invaders.forEach(
+			(i) => {
+				i.kill();
+			}
+		)
+		Main.instance.gui.dispose();
+		Main.instance.bonusGenerator.stop();
+		Main.instance.invaderGenerator.stop();
+		$("#score").text("SCORE " + Main.instance.spaceship.score);
+		$("#kills").text("KILLS " + Main.instance.spaceship.kills);
+		$("#words").text("WORDS " + Main.instance.spaceship.words);
+		$("#experience").text("EXPERIENCE " + Main.instance.spaceship.xp);
+		$(".main-menu").hide();
+		$(".game-over").show();
+	}
 }
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -112,6 +129,30 @@ window.addEventListener("DOMContentLoaded", () => {
 	$("#play-en").on("click", () => {
 		Main.LANGUAGE = "en";
 		Main.Play();
+	});
+	$("#easy").on("click", () => {
+		InvaderGenerator.invaderLevelTime = 70;
+		InvaderGenerator.invaderRate = 10000;
+		$(".level").css("color", "grey");
+		$(".level").css("background", "none");
+		$("#easy").css("color", "black");
+		$("#easy").css("background", "white");
+	});
+	$("#medium").on("click", () => {
+		InvaderGenerator.invaderLevelTime = 60;
+		InvaderGenerator.invaderRate = 8000;
+		$(".level").css("color", "grey");
+		$(".level").css("background", "none");
+		$("#medium").css("color", "black");
+		$("#medium").css("background", "white");
+	});
+	$("#hard").on("click", () => {
+		InvaderGenerator.invaderLevelTime = 50;
+		InvaderGenerator.invaderRate = 6000;
+		$(".level").css("color", "grey");
+		$(".level").css("background", "none");
+		$("#hard").css("color", "black");
+		$("#hard").css("background", "white");
 	});
 })
 

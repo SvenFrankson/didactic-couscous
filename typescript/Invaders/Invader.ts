@@ -169,6 +169,8 @@ class Invader extends BABYLON.Mesh {
     public wound(damage: number) {
         this._hitPoints -= damage;
         if (this._hitPoints < 0) {
+            this.main.spaceship.score += 30;
+            this.main.spaceship.kills ++;
             this.kill();
         }
     }

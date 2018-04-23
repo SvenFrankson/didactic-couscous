@@ -3,9 +3,9 @@ class InvaderGenerator {
     public invaders: Invader[];
 
     public playerRange: number = 100;
-    public invaderRate: number = 10000;
+    public static invaderRate: number = 8000;
 
-    public invaderLevelTime: number = 60;
+    public static invaderLevelTime: number = 60;
     public invaderLevel: number = 1;
 
     public invaderLevelUpWarning: BABYLON.Mesh;
@@ -40,18 +40,22 @@ class InvaderGenerator {
         this._popInvader();
         this.main.scene.onBeforeRenderObservable.add(this._updateInvadersLevel);
     }
+    
+    public stop(): void {
+        clearTimeout(this._popInvaderHandle);
+    }
 
     private timer: number = 0;
     private _updateInvadersLevel = () => {
         this.timer += this.main.engine.getDeltaTime() / 1000;
-        if (this.timer > this.invaderLevelTime) {
+        if (this.timer > InvaderGenerator.invaderLevelTime) {
             this.timer = 0;
             if (Math.random() > 0.5) {
                 this.invaderLevelUpWarningText.text = "INVADERS ARE GETTING STRONGER !";
                 this.invaderLevel *= 1.1;
             } else {
                 this.invaderLevelUpWarningText.text = "INVADERS ARE CALLING BACKUPS !";
-                this.invaderRate /= 1.1;
+                InvaderGenerator.invaderRate /= 1.1;
             }
             this.invaderLevelUpWarning.position.copyFrom(this.main.spaceship.position);
             this.invaderLevelUpWarning.position.y = -1;
@@ -76,6 +80,7 @@ class InvaderGenerator {
         }
     }
 
+    private _popInvaderHandle: number;
     private _popInvader(): void {
         let invader = new Invader(this.main);
         this.invaders.push(invader);
@@ -85,11 +90,11 @@ class InvaderGenerator {
         let maxZ = Math.min(LetterGrid.GRID_DISTANCE, this.spaceship.position.z + this.playerRange);
         invader.position.x = Math.random() * (maxX - minX) + minX;
         invader.position.z = Math.random() * (maxZ - minZ) + minZ;
-        setTimeout(
+        this._popInvaderHandle = setTimeout(
             () => {
                 this._popInvader();
             },
-            Math.random() * this.invaderRate * 1.5
+            Math.random() * InvaderGenerator.invaderRate * 1.5
         );
     }
 }

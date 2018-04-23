@@ -13,6 +13,18 @@ class Spaceship extends BABYLON.Mesh {
             this._hitPoints = Math.round(this.stamina);
         }
     }
+
+    private _score: number = 0;
+    public get score(): number {
+        return this._score;
+    }
+    public set score(v: number) {
+        this._score = Math.round(v);
+        this._updateUI();
+    }
+    public kills: number = 0;
+    public xp: number = 0;
+    public words: number = 0;
     public regenCooldown: number = 60;
     public regenDelay: number = 180;
     public mouseInput: SpaceshipMouseInput;
@@ -29,9 +41,11 @@ class Spaceship extends BABYLON.Mesh {
 
     private _staminaXp: number = 0;
     public upStamina(): void {
+        this.xp++;
         this._staminaXp++;
         this.hitPoints++;
         if (this._staminaXp > this.staminaLevel) {
+            this.score += this.staminaLevel * 5;
             this.main.upgradeSound.play();
             this.staminaLevel++;
             this.regenCooldown--;
@@ -42,9 +56,11 @@ class Spaceship extends BABYLON.Mesh {
     }
     private _shieldXp: number = 0;
     public upShield(): void {
+        this.xp++;
         this._shieldXp++;
         this.hitPoints++;
         if (this._shieldXp > this.shieldLevel) {
+            this.score += this.shieldLevel * 5;
             this.main.upgradeSound.play();
             this.shieldLevel++;
             this.shieldCoef = Math.pow(1.1, this.shieldLevel);
@@ -54,9 +70,11 @@ class Spaceship extends BABYLON.Mesh {
     }
     private _powerXp: number = 0;
     public upPower(): void {
+        this.xp++;
         this._powerXp++;
         this.hitPoints++;
         if (this._powerXp > this.powerLevel) {
+            this.score += this.powerLevel * 5;
             this.main.upgradeSound.play();
             this.powerLevel++;
             this.powerCoef = Math.pow(1.1, this.powerLevel);
@@ -66,9 +84,11 @@ class Spaceship extends BABYLON.Mesh {
     }
     private _firerateXp: number = 0;
     public upFirerate(): void {
+        this.xp++;
         this._firerateXp++;
         this.hitPoints++;
         if (this._firerateXp > this.firerateLevel) {
+            this.score += this.firerateLevel * 5;
             this.main.upgradeSound.play();
             this.firerateLevel++;
             this.firerateCoef = Math.pow(1.1, this.firerateLevel);
@@ -141,7 +161,7 @@ class Spaceship extends BABYLON.Mesh {
         leftSideUI.height = "950px";
         this.gui.addControl(leftSideUI);
 
-        this.scoreUI = new BABYLON.GUI.TextBlock("ScoreBlock", "SCORE 0");
+        this.scoreUI = new BABYLON.GUI.TextBlock("ScoreBlock", "SCORE " + this.score);
         this.scoreUI.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
         this.scoreUI.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
         this.scoreUI.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -316,6 +336,7 @@ class Spaceship extends BABYLON.Mesh {
 
     private _updateUI() {
         this.hpUI.text = "HP " + this.hitPoints + " / " + this.stamina;
+        this.scoreUI.text = "SCORE " + this.score;
         this.staminaTextUI.text = "lvl " + this.staminaLevel;
         this.shieldTextUI.text = "lvl " + this.shieldLevel;
         this.powerTextUI.text = "lvl " + this.powerLevel;
@@ -406,6 +427,19 @@ class Spaceship extends BABYLON.Mesh {
             return;
         }
         this.hitPoints -= damage;
+        if (this.hitPoints <= 0) {
+            setTimeout(
+                () => {
+                    this.getChildMeshes().forEach(
+                        (m) => {
+                            m.isVisible = false;
+                        }
+                    )
+                    Main.GameOver();
+                },
+                250
+            );
+        }
         this._updateUI();
     }
 }
