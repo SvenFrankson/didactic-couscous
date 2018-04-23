@@ -17,6 +17,7 @@ class Main {
 	public invaderGenerator: InvaderGenerator;
 	public spaceship: Spaceship;
 
+	public static musicSound: HTMLAudioElement;
 	public greenLaserSound: BABYLON.Sound;
 	public blueLaserSound: BABYLON.Sound;
 	public redLaserSound: BABYLON.Sound;
@@ -122,6 +123,12 @@ class Main {
 }
 
 window.addEventListener("DOMContentLoaded", () => {
+
+	Main.musicSound = new Audio();
+    Main.musicSound.src = "sounds/music.wav";
+	Main.musicSound.play();
+	Main.musicSound.loop = true;
+
 	$("#play-fr").on("click", () => {
 		Main.LANGUAGE = "fr";
 		Main.Play();
@@ -154,6 +161,16 @@ window.addEventListener("DOMContentLoaded", () => {
 		$("#hard").css("color", "black");
 		$("#hard").css("background", "white");
 	});
+	$("#stfu").on("click", () => {
+		Main.musicSound.pause();
+		$("#stfu").hide();
+		$("#kill-my-ears").show();
+	})
+	$("#kill-my-ears").on("click", () => {
+		Main.musicSound.play();
+		$("#stfu").show();
+		$("#kill-my-ears").hide();
+	})
 })
 
 

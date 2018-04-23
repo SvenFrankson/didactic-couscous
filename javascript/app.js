@@ -419,6 +419,10 @@ Main.LANGUAGE = "en";
 Main.MOUSE_ONLY_CONTROL = false;
 Main.KEYBOARD_LOCAL_CONTROL = true;
 window.addEventListener("DOMContentLoaded", () => {
+    Main.musicSound = new Audio();
+    Main.musicSound.src = "sounds/music.wav";
+    Main.musicSound.play();
+    Main.musicSound.loop = true;
     $("#play-fr").on("click", () => {
         Main.LANGUAGE = "fr";
         Main.Play();
@@ -450,6 +454,16 @@ window.addEventListener("DOMContentLoaded", () => {
         $(".level").css("background", "none");
         $("#hard").css("color", "black");
         $("#hard").css("background", "white");
+    });
+    $("#stfu").on("click", () => {
+        Main.musicSound.pause();
+        $("#stfu").hide();
+        $("#kill-my-ears").show();
+    });
+    $("#kill-my-ears").on("click", () => {
+        Main.musicSound.play();
+        $("#stfu").show();
+        $("#kill-my-ears").hide();
     });
 });
 class Spaceship extends BABYLON.Mesh {
