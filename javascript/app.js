@@ -970,6 +970,29 @@ class SpaceshipMouseInput {
                         }
                     }
                     this.currentDragNDropIndex = -1;
+                    this.tmpLetterInstance.dispose();
+                    this.tmpLetterInstance = undefined;
+                }
+            }
+            if (eventData.type === BABYLON.PointerEventTypes._POINTERMOVE) {
+                if (this.currentDragNDropIndex !== -1) {
+                    if (!this.tmpLetterInstance) {
+                        this.tmpLetterInstance = BABYLON.MeshBuilder.CreateGround("tmpLetterInstance", {
+                            width: LetterGrid.GRID_SIZE * 0.9,
+                            height: LetterGrid.GRID_SIZE * 0.9
+                        }, Main.instance.scene);
+                        let texture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(this.tmpLetterInstance);
+                        let textBlock = new BABYLON.GUI.TextBlock("l", this.spaceship.letterStack.letters[this.currentDragNDropIndex]);
+                        textBlock.fontSize = 1000;
+                        textBlock.color = "grey";
+                        texture.addControl(textBlock);
+                    }
+                    let pick = this.scene.pick(this.scene.pointerX, this.scene.pointerY, (m) => { return m === this.ground; });
+                    if (pick && pick.hit) {
+                        let gridPos = Main.instance.grid.worldToGrid(pick.pickedPoint);
+                        this.tmpLetterInstance.position.x = (gridPos.x + 0.5) * LetterGrid.GRID_SIZE;
+                        this.tmpLetterInstance.position.z = (gridPos.y + 0.5) * LetterGrid.GRID_SIZE;
+                    }
                 }
             }
         });
