@@ -1,5 +1,6 @@
 class TipsGenerator {
 
+    public static index = 1;
     public static randomHandle: number;
 
     public static Show(id: string) {
@@ -21,8 +22,14 @@ class TipsGenerator {
     }
 
     public static ShowRandomTips() {
-        let r = Math.floor(Math.random() * 6 + 1);
-        TipsGenerator.Show("tips-" + r);
+        if (TipsGenerator.index > 10) {
+            let r = Math.floor(Math.random() * 6 + 1);
+            TipsGenerator.Show("tips-" + r);
+        }
+        else {
+            TipsGenerator.Show("tips-" + TipsGenerator.index);
+            TipsGenerator.index++;
+        }
     }
 
     public static ShowRandomGood() {

@@ -84,7 +84,12 @@ class Main {
 		this.bonusGenerator.start();
 
 		this.invaderGenerator = new InvaderGenerator(this);
-		this.invaderGenerator.start();
+		setTimeout(
+			() => {
+				this.invaderGenerator.start();
+			},
+			5000
+		);
 	}
 
 	public animate(): void {
@@ -103,6 +108,12 @@ class Main {
 		let game: Main = new Main("render-canvas");
 		game.createScene();
 		game.animate();
+		setTimeout(
+			() => {
+				TipsGenerator.ShowRandomTips();
+			},
+			1000
+		);
 	}
 
 	public static GameOver(): void {
