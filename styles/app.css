@@ -108,7 +108,8 @@ html, body {
 }
 
 .subsubtitle {
-    padding-top: 2%;
+    margin-top: 20px;
+    margin-bottom: 20px;
     width: 100%;
     text-align: left;
     font-size: 25px;
@@ -181,9 +182,6 @@ html, body {
     border: solid 1px white;
     color: white;
     background-color: rgba(0, 0, 0, 0);
-    background-size: 80% 80%;
-    background-repeat: no-repeat;
-    background-position: center;
     padding: 0px;
     cursor: pointer;
 }
@@ -196,7 +194,6 @@ html, body {
 }
 
 #control-mode {
-    margin-top: 20px;
     width: 256px;
     height: 128px;
     padding: 0px;
@@ -213,6 +210,32 @@ html, body {
 .control.active {
     opacity: 1;
     border: solid 1px white;
+}
+
+.toggle-wrap {
+    width: 256px;
+    padding: 0px;
+    text-align: left;
+}
+
+.toggle-button {
+    display: inline-block;
+    height: 40px;
+    width: 49%;
+    margin: 0px;
+    padding: 0px;
+    text-align: center;
+    font-size: 20px;
+    font-family: "Komikax";
+    border: solid 1px white;
+    color: grey;
+    background-color: rgba(0, 0, 0, 0);
+    cursor: pointer;
+}
+
+.toggle-button.active {
+    color: black;
+    background-color: white;
 }
 
 .tips {

@@ -199,15 +199,25 @@ window.addEventListener("DOMContentLoaded", () => {
 		$(".control").removeClass("active");
 		$("#control-local").addClass("active");
 	});
-	$("#stfu").on("click", () => {
-		Main.musicSound.pause();
-		$("#stfu").hide();
-		$("#kill-my-ears").show();
+	$("#keyboard-qwerty").on("click", () => {
+		SpaceshipKeyboardInput.QwertyMode();
+		$(".keyboard-button").removeClass("active");
+		$("#keyboard-qwerty").addClass("active");
 	})
-	$("#kill-my-ears").on("click", () => {
+	$("#keyboard-azerty").on("click", () => {
+		SpaceshipKeyboardInput.AzertyMode();
+		$(".keyboard-button").removeClass("active");
+		$("#keyboard-azerty").addClass("active");
+	})
+	$("#music-on").on("click", () => {
 		Main.musicSound.play();
-		$("#stfu").show();
-		$("#kill-my-ears").hide();
+		$(".music-button").removeClass("active");
+		$("#music-on").addClass("active");
+	})
+	$("#music-off").on("click", () => {
+		Main.musicSound.pause();
+		$(".music-button").removeClass("active");
+		$("#music-off").addClass("active");
 	})
 })
 

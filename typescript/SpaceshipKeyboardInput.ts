@@ -1,5 +1,24 @@
 class SpaceshipKeyboardInput {
 
+    public static forwardKey = "w";
+    public static backKey = "s";
+    public static leftKey = "a";
+    public static rightKey = "d";
+
+    public static AzertyMode(): void {
+        SpaceshipKeyboardInput.forwardKey = "z";
+        SpaceshipKeyboardInput.backKey = "s";
+        SpaceshipKeyboardInput.leftKey = "q";
+        SpaceshipKeyboardInput.rightKey = "d";
+    }
+
+    public static QwertyMode(): void {
+        SpaceshipKeyboardInput.forwardKey = "w";
+        SpaceshipKeyboardInput.backKey = "s";
+        SpaceshipKeyboardInput.leftKey = "a";
+        SpaceshipKeyboardInput.rightKey = "d";
+    }
+
     private leftKeyDown: boolean = false;
     private upKeyDown: boolean = false;
     private rightKeyDown: boolean = false;
@@ -21,16 +40,16 @@ class SpaceshipKeyboardInput {
                 if (e.keyCode === 32) {
                     this.spacekeyDown = false;
                 }
-                if (e.keyCode === 37 || e.key === "a") {
+                if (e.keyCode === 37 || e.key === SpaceshipKeyboardInput.leftKey) {
                     this.leftKeyDown = false;
                 }
-                if (e.keyCode === 38 || e.key === "w") {
+                if (e.keyCode === 38 || e.key === SpaceshipKeyboardInput.forwardKey) {
                     this.upKeyDown = false;
                 }
-                if (e.keyCode === 39 || e.key === "d") {
+                if (e.keyCode === 39 || e.key === SpaceshipKeyboardInput.rightKey) {
                     this.rightKeyDown = false;
                 }
-                if (e.keyCode === 40 || e.key === "s") {
+                if (e.keyCode === 40 || e.key === SpaceshipKeyboardInput.backKey) {
                     this.downKeyDown = false;
                 }
             }
@@ -41,16 +60,16 @@ class SpaceshipKeyboardInput {
                 if (e.keyCode === 32) {
                     this.spacekeyDown = true;
                 }
-                if (e.keyCode === 37 || e.key === "a") {
+                if (e.keyCode === 37 || e.key === SpaceshipKeyboardInput.leftKey) {
                     this.leftKeyDown = true;
                 }
-                if (e.keyCode === 38 || e.key === "w") {
+                if (e.keyCode === 38 || e.key === SpaceshipKeyboardInput.forwardKey) {
                     this.upKeyDown = true;
                 }
-                if (e.keyCode === 39 || e.key === "d") {
+                if (e.keyCode === 39 || e.key === SpaceshipKeyboardInput.rightKey) {
                     this.rightKeyDown = true;
                 }
-                if (e.keyCode === 40 || e.key === "s") {
+                if (e.keyCode === 40 || e.key === SpaceshipKeyboardInput.backKey) {
                     this.downKeyDown = true;
                 }
             }

@@ -26,6 +26,16 @@
                             <img id="control-world" class="control active" src="textures/control-world.png"></img>
                             <img id="control-local" class="control" src="textures/control-local.png"></img>
                         </div>
+                        <h3 class="subsubtitle">Keyboard</h3>
+                        <div class="toggle-wrap">
+                            <span id="keyboard-qwerty" class="toggle-button  keyboard-button active">QWERTY</span>
+                            <span id="keyboard-azerty" class="toggle-button keyboard-button">AZERTY</span>
+                        </div>
+                        <h3 class="subsubtitle">Music</h3>
+                        <div class="toggle-wrap">
+                            <span id="music-on" class="toggle-button  music-button active">ON</span>
+                            <span id="music-off" class="toggle-button music-button">OFF</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -102,9 +112,7 @@
         </div>
     </div>
     <canvas id="render-canvas"></canvas>
-    
-    <div id="stfu">MUTE</div>
-    <div id="kill-my-ears" hidden>UNMUTE</div>
+
     <div id="foot" class="main-menu">
         <p>Scrabble Invaders by <a href="http://svenfrankson.github.io/">Sven Frankson</a> for Ludum Dare 41, April 2018.</p>
         <p>Code released under the terms of the <a href="https://github.com/SvenFrankson/didactic-couscous/blob/master/LICENSE">MIT Licence</a>.</p>
@@ -112,9 +120,6 @@
         <p>Code and assets can be <a href="https://github.com/SvenFrankson/didactic-couscous">downloaded here</a>.</p>
         <p>Thanks for playing ! Feel free to rate and share !</p>
     </div>
-    <div id="left-ui" class="main-menu">
-        <div id="control-mask"></div>
-    </div> 
     <div id="tips-1" class="tips" hidden>
         Lesson 1 - Move using keyboard arrows.
     </div>

@@ -485,15 +485,25 @@ window.addEventListener("DOMContentLoaded", () => {
         $(".control").removeClass("active");
         $("#control-local").addClass("active");
     });
-    $("#stfu").on("click", () => {
-        Main.musicSound.pause();
-        $("#stfu").hide();
-        $("#kill-my-ears").show();
+    $("#keyboard-qwerty").on("click", () => {
+        SpaceshipKeyboardInput.QwertyMode();
+        $(".keyboard-button").removeClass("active");
+        $("#keyboard-qwerty").addClass("active");
     });
-    $("#kill-my-ears").on("click", () => {
+    $("#keyboard-azerty").on("click", () => {
+        SpaceshipKeyboardInput.AzertyMode();
+        $(".keyboard-button").removeClass("active");
+        $("#keyboard-azerty").addClass("active");
+    });
+    $("#music-on").on("click", () => {
         Main.musicSound.play();
-        $("#stfu").show();
-        $("#kill-my-ears").hide();
+        $(".music-button").removeClass("active");
+        $("#music-on").addClass("active");
+    });
+    $("#music-off").on("click", () => {
+        Main.musicSound.pause();
+        $(".music-button").removeClass("active");
+        $("#music-off").addClass("active");
     });
 });
 class Spaceship extends BABYLON.Mesh {
@@ -925,16 +935,16 @@ class SpaceshipKeyboardInput {
             if (e.keyCode === 32) {
                 this.spacekeyDown = false;
             }
-            if (e.keyCode === 37 || e.key === "a") {
+            if (e.keyCode === 37 || e.key === SpaceshipKeyboardInput.leftKey) {
                 this.leftKeyDown = false;
             }
-            if (e.keyCode === 38 || e.key === "w") {
+            if (e.keyCode === 38 || e.key === SpaceshipKeyboardInput.forwardKey) {
                 this.upKeyDown = false;
             }
-            if (e.keyCode === 39 || e.key === "d") {
+            if (e.keyCode === 39 || e.key === SpaceshipKeyboardInput.rightKey) {
                 this.rightKeyDown = false;
             }
-            if (e.keyCode === 40 || e.key === "s") {
+            if (e.keyCode === 40 || e.key === SpaceshipKeyboardInput.backKey) {
                 this.downKeyDown = false;
             }
         });
@@ -942,16 +952,16 @@ class SpaceshipKeyboardInput {
             if (e.keyCode === 32) {
                 this.spacekeyDown = true;
             }
-            if (e.keyCode === 37 || e.key === "a") {
+            if (e.keyCode === 37 || e.key === SpaceshipKeyboardInput.leftKey) {
                 this.leftKeyDown = true;
             }
-            if (e.keyCode === 38 || e.key === "w") {
+            if (e.keyCode === 38 || e.key === SpaceshipKeyboardInput.forwardKey) {
                 this.upKeyDown = true;
             }
-            if (e.keyCode === 39 || e.key === "d") {
+            if (e.keyCode === 39 || e.key === SpaceshipKeyboardInput.rightKey) {
                 this.rightKeyDown = true;
             }
-            if (e.keyCode === 40 || e.key === "s") {
+            if (e.keyCode === 40 || e.key === SpaceshipKeyboardInput.backKey) {
                 this.downKeyDown = true;
             }
         });
@@ -965,6 +975,18 @@ class SpaceshipKeyboardInput {
         });
         this.scene.onBeforeRenderObservable.add(this._checkInput);
     }
+    static AzertyMode() {
+        SpaceshipKeyboardInput.forwardKey = "z";
+        SpaceshipKeyboardInput.backKey = "s";
+        SpaceshipKeyboardInput.leftKey = "q";
+        SpaceshipKeyboardInput.rightKey = "d";
+    }
+    static QwertyMode() {
+        SpaceshipKeyboardInput.forwardKey = "w";
+        SpaceshipKeyboardInput.backKey = "s";
+        SpaceshipKeyboardInput.leftKey = "a";
+        SpaceshipKeyboardInput.rightKey = "d";
+    }
     get scene() {
         return this.spaceship.main.scene;
     }
@@ -972,6 +994,10 @@ class SpaceshipKeyboardInput {
         return this.spaceship.main.canvas;
     }
 }
+SpaceshipKeyboardInput.forwardKey = "w";
+SpaceshipKeyboardInput.backKey = "s";
+SpaceshipKeyboardInput.leftKey = "a";
+SpaceshipKeyboardInput.rightKey = "d";
 class SpaceshipMouseInput {
     constructor(spaceship) {
         this.spaceship = spaceship;
